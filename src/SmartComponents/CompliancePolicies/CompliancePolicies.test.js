@@ -6,10 +6,13 @@ import propTypes from 'prop-types';
 import { MemoryRouter } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 
-import { profiles } from '@/__fixtures__/profiles.js';
 import { CompliancePolicies } from './CompliancePolicies.js';
+import { usePoliciesQuery } from '../../Utilities/hooks/usePoliciesQuery/usePoliciesQuery';
+import fixtures from '../../../cypress/fixtures/compliancePolicies2.json';
 
 jest.mock('@apollo/client');
+
+jest.mock('../../Utilities/hooks/usePoliciesQuery/usePoliciesQuery');
 
 const TestWrapper = ({ children }) => <MemoryRouter>{children}</MemoryRouter>;
 TestWrapper.propTypes = { children: propTypes.node };
@@ -23,9 +26,9 @@ describe('CompliancePolicies', () => {
   };
 
   it('expect to render without error', () => {
-    useQuery.mockImplementation(() => ({
+    usePoliciesQuery.mockImplementation(() => ({
       ...queryDefaults,
-      data: profiles,
+      data: fixtures,
     }));
 
     render(
@@ -49,6 +52,11 @@ describe('CompliancePolicies', () => {
       },
     }));
 
+    usePoliciesQuery.mockImplementation(() => ({
+      ...queryDefaults,
+      data: { data: [] },
+    }));
+
     render(
       <TestWrapper>
         <CompliancePolicies />
@@ -63,7 +71,8 @@ describe('CompliancePolicies', () => {
       networkError: { statusCode: 500 },
       error: 'Test Error loading',
     };
-    useQuery.mockImplementation(() => ({
+
+    usePoliciesQuery.mockImplementation(() => ({
       ...queryDefaults,
       error,
     }));
@@ -78,7 +87,7 @@ describe('CompliancePolicies', () => {
   });
 
   it('expect to render loading', () => {
-    useQuery.mockImplementation(() => ({
+    usePoliciesQuery.mockImplementation(() => ({
       ...queryDefaults,
       loading: true,
     }));
