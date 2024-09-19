@@ -29,7 +29,7 @@ export const QUERY = gql`
 const DEFAULT_FILTER_GRAPHQL = 'has_test_results = true or has_policy = true';
 const DEFAULT_FILTER_REST = 'assigned_or_scanned=true';
 
-const dataMap = {
+export const dataMap = {
   display_name: 'name',
   culled_timestamp: 'culledTimestamp',
   os_major_version: 'osMajorVersion',

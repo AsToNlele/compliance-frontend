@@ -5,10 +5,12 @@ import { NoSystemsTableWithWarning } from 'PresentationalComponents';
 import { SystemsTable } from 'SmartComponents';
 import * as Columns from '../SystemsTable/Columns';
 import EditSystemsButtonToolbarItem from './EditSystemsButtonToolbarItem';
+import { PolicySystemsTable } from '../SystemsTable/PolicySystemsTable';
 
 const PolicySystemsTab = ({ policy }) => {
+  console.log('POLICY', policy);
   return (
-    <SystemsTable
+    <PolicySystemsTable
       columns={[
         Columns.customName({
           showLink: true,
@@ -19,7 +21,6 @@ const PolicySystemsTab = ({ policy }) => {
       ]}
       showOsMinorVersionFilter={[policy.osMajorVersion]}
       policyId={policy.id}
-      defaultFilter={`policy_id = ${policy.id}`}
       showActions={false}
       remediationsEnabled={false}
       noSystemsTable={
@@ -27,6 +28,7 @@ const PolicySystemsTab = ({ policy }) => {
       }
       complianceThreshold={policy.complianceThreshold}
       dedicatedAction={<EditSystemsButtonToolbarItem policy={policy} />}
+      apiV2Enabled={true}
     />
   );
 };

@@ -15,11 +15,11 @@ import {
 } from './constants';
 import {
   useGetEntities,
-  useOsMinorVersionFilterRest,
   useInventoryUtilities,
   useSystemsExport,
   useSystemsFilter,
   useSystemBulkSelect,
+  usePolicyOsMinorVersionFilterRest,
 } from './hooks';
 import { useFetchSystemsV2 } from './hooks/useFetchSystems';
 import {
@@ -27,8 +27,12 @@ import {
   compliantSystemFilterConfiguration,
   complianceReportTableAdditionalFilter,
 } from '../../constants';
+import { useSerialisedTableState } from '../../Frameworks/AsyncTableTools/hooks/useTableState';
+import { apiInstance } from '../../Utilities/hooks/useQuery';
+import dataSerialiser from '../../Utilities/dataSerialiser';
+import { dataMap } from '../ComplianceSystems/ComplianceSystems';
 
-export const SystemsTable = ({
+export const PolicySystemsTable = ({
   columns,
   showAllSystems,
   policyId,
@@ -43,7 +47,7 @@ export const SystemsTable = ({
   compact,
   remediationsEnabled,
   systemProps,
-  defaultFilter,
+  // defaultFilter,
   emptyStateComponent,
   prependComponent,
   showOsMinorVersionFilter,
@@ -55,7 +59,6 @@ export const SystemsTable = ({
   dedicatedAction,
   ruleSeverityFilter,
   showGroupsFilter,
-  fetchApi,
 }) => {
   const inventory = useRef(null);
   const [isEmpty, setIsEmpty] = useState(false);
@@ -65,9 +68,9 @@ export const SystemsTable = ({
   const [perPage, setPerPage] = useState(50);
   const [currentTags, setCurrentTags] = useState([]);
   const navigateToInventory = useNavigate('inventory');
-  const osMinorVersionFilter = useOsMinorVersionFilterRest(
+  const osMinorVersionFilter = usePolicyOsMinorVersionFilterRest(
     showOsMinorVersionFilter,
-    [defaultFilter]
+    policyId
   );
 
   const {
@@ -88,8 +91,8 @@ export const SystemsTable = ({
   });
   const systemsFilter = useSystemsFilter(
     filterString(),
-    showOnlySystemsWithTestResults,
-    defaultFilter
+    showOnlySystemsWithTestResults
+    // defaultFilter
   );
 
   const systemFetchArguments = {
@@ -134,6 +137,24 @@ export const SystemsTable = ({
     ) {
       setIsEmpty(true);
     }
+  };
+
+  const fetchApi = async (page, perPage, combinedVariables) => {
+    const offset = perPage * (page - 1);
+
+    return apiInstance
+      .policySystems(
+        policyId,
+        undefined,
+        perPage,
+        offset,
+        combinedVariables.sortBy,
+        combinedVariables.filter
+      )
+      .then(({ data: { data = [], meta = {} } = {} } = {}) => ({
+        data: dataSerialiser(data, dataMap),
+        meta,
+      }));
   };
 
   console.log('debug rest: ', systemFetchArguments);
@@ -230,7 +251,7 @@ export const SystemsTable = ({
   );
 };
 
-SystemsTable.propTypes = {
+PolicySystemsTable.propTypes = {
   columns: PropTypes.arrayOf(
     PropTypes.oneOfType([PropTypes.shape({}), PropTypes.string])
   ),
@@ -248,7 +269,7 @@ SystemsTable.propTypes = {
   error: PropTypes.object,
   compact: PropTypes.bool,
   remediationsEnabled: PropTypes.bool,
-  defaultFilter: PropTypes.string,
+  // defaultFilter: PropTypes.string,
   systemProps: PropTypes.shape({
     isFullView: PropTypes.bool,
   }),
@@ -268,7 +289,7 @@ SystemsTable.propTypes = {
   fetchApi: PropTypes.func.isRequired,
 };
 
-SystemsTable.defaultProps = {
+PolicySystemsTable.defaultProps = {
   policyId: '',
   showActions: true,
   enableExport: true,
@@ -282,4 +303,4 @@ SystemsTable.defaultProps = {
   showGroupsFilter: false,
 };
 
-export default SystemsTable;
+export default PolicySystemsTable;

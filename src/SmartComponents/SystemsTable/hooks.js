@@ -13,6 +13,7 @@ import { useFetchSystems, useFetchSystemsV2 } from './hooks/useFetchSystems';
 import useAPIV2FeatureFlag from '../../Utilities/hooks/useAPIV2FeatureFlag';
 import useOperatingSystemsQuery from '../../Utilities/hooks/api/useOperatingSystems';
 import { buildOSObject } from '../../Utilities/helpers';
+import { usePolicyOperatingSystemsQuery } from '../../Utilities/hooks/api/usePolicyOperatingSystems';
 
 const groupByMajorVersion = (versions = [], showFilter = []) => {
   const showVersion = (version) => {
@@ -51,6 +52,15 @@ export const useOsMinorVersionFilterRest = (
   fetchArguments = {}
 ) => {
   let { data = [] } = useOperatingSystemsQuery(fetchArguments);
+  const osMapArray = buildOSObject(data);
+
+  return showFilter
+    ? osMinorVersionFilter(groupByMajorVersion(osMapArray, showFilter))
+    : [];
+};
+
+export const usePolicyOsMinorVersionFilterRest = (showFilter, policyId) => {
+  let { data = [] } = usePolicyOperatingSystemsQuery(policyId);
   const osMapArray = buildOSObject(data);
 
   return showFilter
