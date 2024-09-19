@@ -8,6 +8,7 @@ import updatePolicy from '@redhat-cloud-services/compliance-client/dist/UpdatePo
 import deletePolicy from '@redhat-cloud-services/compliance-client/dist/DeletePolicy';
 import report from '@redhat-cloud-services/compliance-client/dist/Report';
 import reports from '@redhat-cloud-services/compliance-client/dist/Reports';
+import reportSystems from '@redhat-cloud-services/compliance-client/dist/ReportSystems';
 import systemsOS from '@redhat-cloud-services/compliance-client/dist/SystemsOS';
 import policySystemsOS from '@redhat-cloud-services/compliance-client/dist/PolicySystemsOS';
 
@@ -26,6 +27,7 @@ const apiInstance = APIFactory(
     deletePolicy,
     report,
     reports,
+    reportSystems,
     systemsOS,
     policySystemsOS,
   },

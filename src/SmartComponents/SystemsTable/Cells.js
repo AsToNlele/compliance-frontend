@@ -112,14 +112,13 @@ Policies.propTypes = {
 };
 
 export const FailedRules = ({ id, testResultProfiles }) => {
-  const rulesFailed = testResultProfiles.reduce(
-    (acc, { rulesFailed }) => acc + parseInt(rulesFailed || 0),
-    0
-  );
+  // const rulesFailed = testResultProfiles?.reduce(
+  //   (acc, { rulesFailed }) => acc + parseInt(rulesFailed || 0),
+  //   0
+  // );
 
-  return (
-    <SystemLink {...{ id }}>{rulesFailed > 0 ? rulesFailed : 'N/A'}</SystemLink>
-  );
+  return 'N/A';
+  // <SystemLink {...{ id }}>{rulesFailed > 0 ? rulesFailed : 'N/A'}</SystemLink>
 };
 
 FailedRules.propTypes = {
@@ -129,12 +128,13 @@ FailedRules.propTypes = {
 
 export { complianceScoreData };
 export const ComplianceScore = ({ testResultProfiles }) => {
-  const { score, supported, compliant } = testResultProfiles[0] || {};
-  return testResultProfiles.length > 0 ? (
-    <PresentationalComplianceScore {...{ score, supported, compliant }} />
-  ) : (
-    'N/A'
-  );
+  return 'N/A';
+  // const { score, supported, compliant } = testResultProfiles[0] || {};
+  // return testResultProfiles.length > 0 ? (
+  //   <PresentationalComplianceScore {...{ score, supported, compliant }} />
+  // ) : (
+  //   'N/A'
+  // );
 };
 
 ComplianceScore.propTypes = {

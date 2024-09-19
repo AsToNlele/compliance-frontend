@@ -35,6 +35,7 @@ import { useReport } from '../../Utilities/hooks/api/useReport';
 import useAPIV2FeatureFlag from '../../Utilities/hooks/useAPIV2FeatureFlag';
 import { dataMap, QUERY } from './constants';
 import dataSerialiser from '../../Utilities/dataSerialiser';
+import ReportSystemsTable from '../SystemsTable/ReportSystemsTable';
 
 const ReportDetailsBase = ({
   route,
@@ -52,6 +53,8 @@ const ReportDetailsBase = ({
     policyName = profile.policy.name;
     pageTitle = `Report: ${policyName}`;
   }
+
+  console.log('PROFILEEE', data);
 
   useTitleEntity(route, policyName);
 
@@ -128,7 +131,7 @@ const ReportDetailsBase = ({
         <section className="pf-v5-c-page__main-section">
           <Grid hasGutter>
             <GridItem span={12}>
-              <SystemsTable
+              <ReportSystemsTable
                 showOsMinorVersionFilter={[profile.osMajorVersion]}
                 ssgVersions={ssgVersions}
                 columns={[
@@ -147,8 +150,7 @@ const ReportDetailsBase = ({
                   Columns.LastScanned,
                 ]}
                 compliantFilter
-                defaultFilter={`policy_id = ${profile.id}`}
-                policyId={profile.id}
+                reportId={profile.id}
                 tableProps={{
                   rowWrapper: ReportedSystemRow,
                 }}
