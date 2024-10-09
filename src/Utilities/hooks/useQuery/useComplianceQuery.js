@@ -34,6 +34,8 @@ const useComplianceQuery = (endpoint) => {
   const tableState = useRawTableState();
   const serialisedTableState = useSerialisedTableState();
 
+  console.log('serialisedTableState', serialisedTableState);
+
   const { offset, limit } = serialisedTableState?.pagination || {};
 
   const filter = serialisedTableState?.filters;

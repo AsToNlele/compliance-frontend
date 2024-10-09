@@ -1,5 +1,5 @@
 // TODO correct the serialiser to transform state put into the tablestate to be API consumable
-export const paginationSerialiser = (state) => {
+export const paginationSerialiser = (state = { page: 1, perPage: 10 }) => {
   const offset = (state.page - 1) * state.perPage;
   const limit = state.perPage;
 
@@ -46,7 +46,7 @@ const findFilterSerialiser = (filterConfigItem) => {
  *  @tutorial filter-serialiser
  *
  */
-export const filtersSerialiser = (state, filters) => {
+export const filtersSerialiser = (state = {}, filters) => {
   const queryParts = Object.entries(state).reduce(
     (filterQueryParts, [filterId, value]) => {
       const filterConfigItem = filters.find((filter) => filter.id === filterId);
@@ -88,5 +88,10 @@ export const filtersSerialiser = (state, filters) => {
  *  ];
  *
  */
-export const sortSerialiser = ({ index, direction }, columns) =>
-  `${columns[index].sortable}:${direction}`;
+export const sortSerialiser = ({ index, direction } = {}, columns) => {
+  console.log(index, direction, columns, columns[index - 1]);
+  return (
+    columns[index - 1]?.sortable &&
+    `${columns[index - 1].sortable}:${direction}`
+  );
+};
