@@ -12,29 +12,30 @@ const RemediationButton = ({
   onRemediationCreated,
   ...buttonProps
 }) => {
-  const { isLoading: isLoadingIssues, fetch } = useIssuesFetch(
-    policyId,
-    rules,
-    systems
-  );
-
-  return (
-    <RemediationRemediationButton
-      isDisabled={systems?.length === 0 || isLoadingIssues}
-      onRemediationCreated={(result) => {
-        dispatchNotification(result.getNotification());
-      }}
-      dataProvider={fetch}
-      buttonProps={{
-        ouiaId: 'RemediateButton',
-        isLoading: isLoadingIssues,
-      }}
-      fallback={<FallbackButton />}
-      {...buttonProps}
-    >
-      Remediate
-    </RemediationRemediationButton>
-  );
+  return <h1>Hello</h1>;
+  // const { isLoading: isLoadingIssues, fetch } = useIssuesFetch(
+  //   policyId,
+  //   rules,
+  //   systems
+  // );
+  //
+  // return (
+  //   <RemediationRemediationButton
+  //     isDisabled={systems?.length === 0 || isLoadingIssues}
+  //     onRemediationCreated={(result) => {
+  //       dispatchNotification(result.getNotification());
+  //     }}
+  //     dataProvider={fetch}
+  //     buttonProps={{
+  //       ouiaId: 'RemediateButton',
+  //       isLoading: isLoadingIssues,
+  //     }}
+  //     fallback={<FallbackButton />}
+  //     {...buttonProps}
+  //   >
+  //     Remediate
+  //   </RemediationRemediationButton>
+  // );
 };
 
 RemediationButton.propTypes = {
