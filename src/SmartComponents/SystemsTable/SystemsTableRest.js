@@ -65,9 +65,10 @@ export const SystemsTable = ({
   const [perPage, setPerPage] = useState(50);
   const [currentTags, setCurrentTags] = useState([]);
   const navigateToInventory = useNavigate('inventory');
+  console.log('LMAO:', defaultFilter, policyId);
   const osMinorVersionFilter = useOsMinorVersionFilterRest(
     showOsMinorVersionFilter,
-    [defaultFilter, ...(policyId && { policyId })]
+    [defaultFilter, policyId && { policyId }]
   );
   const [error, setError] = useState(errorProp);
 
