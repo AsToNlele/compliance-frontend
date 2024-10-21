@@ -85,13 +85,16 @@ SSGVersion.propTypes = {
 
 export const SSGVersions = ({ testResultProfiles = [] }) =>
   testResultProfiles.length !== 0
-    ? testResultProfiles.map((profile) => (
-        <SSGVersion
-          key={`ssgversion-${profile.id}`}
-          ssgVersion={profile?.benchmark?.version}
-          supported={profile?.supported}
-        />
-      ))
+    ? testResultProfiles.map((profile) => {
+        console.log(profile);
+        return (
+          <SSGVersion
+            key={`ssgversion-${profile.id}`}
+            ssgVersion={profile?.benchmark?.version}
+            supported={profile?.supported}
+          />
+        );
+      })
     : 'Unknown';
 
 SSGVersions.propTypes = {
@@ -116,6 +119,8 @@ export const FailedRules = ({ id, testResultProfiles }) => {
     (acc, { rulesFailed }) => acc + parseInt(rulesFailed || 0),
     0
   );
+
+  console.log('RULES FAILED', rulesFailed, testResultProfiles);
 
   return (
     <SystemLink {...{ id }}>{rulesFailed > 0 ? rulesFailed : 'N/A'}</SystemLink>

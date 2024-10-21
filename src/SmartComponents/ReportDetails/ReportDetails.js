@@ -83,7 +83,7 @@ const ReportDetailsBase = ({
     // offset?: any;
     // sortBy?: any;
     // filter?: any;
-    return apiInstance
+    let systems = await apiInstance
       .reportSystems(
         id,
         undefined,
@@ -99,7 +99,52 @@ const ReportDetailsBase = ({
           data: processSystemsData(data),
           meta,
         };
+      })
+      .catch((e) => {
+        console.log(e);
       });
+
+    const systemIdsFilter = systems.data
+      .map((system) => {
+        return `system_id = ${system.id}`;
+      })
+      .join(' OR ');
+
+    console.log(systemIdsFilter);
+
+    const testResults = await apiInstance.reportTestResults(
+      id,
+      undefined,
+      perPage,
+      undefined,
+      undefined,
+      systemIdsFilter
+    );
+
+    systems = {
+      ...systems,
+      data: systems.data.map((system) => {
+        let foundTestResult = testResults.data.data.find(
+          (item) => item.system_id === system.id
+        );
+
+        foundTestResult = {
+          ...foundTestResult,
+          rulesFailed: foundTestResult.failed_rule_count,
+          benchmark: {
+            version: foundTestResult.security_guide_version,
+          },
+        };
+
+        const testResultProfiles = [foundTestResult];
+
+        return { ...system, testResultProfiles };
+      }),
+    };
+
+    console.log('updated systems', systems);
+
+    return systems;
   };
 
   return (
@@ -213,11 +258,11 @@ const ReportDetailsBase = ({
                   // )}
                   // showComplianceSystemsInfo
                   // enableEditPolicy={false}
-                  // remediationsEnabled={false}
+                  remediationsEnabled={true}
                   fetchApi={fetchApi}
                   // apiV2Enabled={apiV2Enabled}
                   // showOsMinorVersionFilter={[profile.osMajorVersion]}
-                  ssgVersions={ssgVersions}
+                  // ssgVersions={ssgVersions}
                   columns={[
                     Columns.customName({
                       showLink: true,
@@ -229,8 +274,8 @@ const ReportDetailsBase = ({
                     }),
                     Columns.inventoryColumn('tags'),
                     Columns.SsgVersion,
-                    // // Columns.FailedRules,
-                    // Columns.ComplianceScore,
+                    Columns.FailedRules,
+                    Columns.ComplianceScore,
                     Columns.LastScanned,
                   ]}
                   // compliantFilter
