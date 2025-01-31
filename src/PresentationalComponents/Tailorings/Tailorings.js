@@ -28,12 +28,13 @@ import NoTailorings from './NoTailorings';
  *  @param   {string}             [props.ouiaId]                         OuiaId to pass to the PatternFly Table
  *  @param   {Function}           [props.onValueOverrideSave]            Callback function called when a value of a rule is saved
  *  @param   {Function}           [props.onSelect]                       Callback function called when any selection is made
- *  @param   {object}             [props.preselected]                    An object containing the preselection of rules for each tab
+ *  @param   {object}             [props.selected]                       An object containing the current selection of rules for each tab
  *  @param   {boolean}            [props.enableSecurityGuideRulesToggle] Will enable the "Only Selected" toggle. When a policy with tailorings is shown and the toggle is enabled it will request rule data from the tailoring, with it disabled it will load rule data from the security guide. If a profile is provided it will load rules either from the profile, if the toggle is enabled, otherwise from the security guide.
  *  @param                        [props.rulesPageLink]
  *
  *  @param   {object}             props.selectedVersionCounts            An object containing minor version as a key and count as a value. Helps to render the system count badge in tab headers.
  *  @param                        props.valueOverrides
+ *  @param                        props.selected
  *  @returns {React.ReactElement}
  *
  *  @category Compliance
@@ -105,7 +106,7 @@ import NoTailorings from './NoTailorings';
  * />
  *
  *  // Will show tabs with rules from the security guide and the specified OS minor versions
- *  // and preselect rules with the IDs provided in preselected. The key can also be a tailorings ID
+ *  // and preselect rules with the IDs provided in selected. The key can also be a tailorings ID
  *
  *  <Tailorings
  *   ouiaId="RHELVersions"
@@ -128,7 +129,7 @@ import NoTailorings from './NoTailorings';
  *      profileId: 'XYZ-ABC',
  *    },
  *  ]}
- *  preselected={{
+ *  selected={{
  *    "2": ['RULE_ID1', 'RULE_ID2']
  *    "1": ['RULE_ID11', 'RULE_ID5']
  *  }}
@@ -145,10 +146,11 @@ import NoTailorings from './NoTailorings';
   rulesPageLink,
   onValueOverrideSave,
   onSelect,
-  preselected,
+  selected,
   enableSecurityGuideRulesToggle,
   selectedVersionCounts,
   valueOverrides,
+  onReset,
   ...rulesTableProps
 }) => {
   const {
@@ -237,10 +239,10 @@ import NoTailorings from './NoTailorings';
                     enableSecurityGuideRulesToggle,
                     rulesTableProps,
                     onValueOverrideSave: onValueSave,
+                    onReset: onReset,
                     ...(onSelect ? { onSelect: onSelectTailoring } : {}),
-                    preselected:
-                      preselected?.[tab.id] ||
-                      preselected?.[tab.os_minor_version],
+                    selected:
+                      selected?.[tab.id] || selected?.[tab.os_minor_version],
                     rulesPageLink: rulesPageLink,
                     valueOverrides,
                   }}
@@ -273,7 +275,8 @@ Tailorings.propTypes = {
   onRuleValueReset: propTypes.func,
   onValueOverrideSave: propTypes.func,
   onSelect: propTypes.func,
-  preselected: propTypes.object,
+  onReset: propTypes.func,
+  selected: propTypes.object,
   enableSecurityGuideRulesToggle: propTypes.bool,
   selectedVersionCounts: propTypes.object,
   valueOverrides: propTypes.object,

@@ -11,8 +11,15 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { LinkWithPermission as Link } from 'PresentationalComponents';
 import OsVersionText from '../../TabbedRules/OsVersionText';
 import { SSGVersionText } from '../../TabbedRules/ProfileTabContent';
+import ResetRules from 'PresentationalComponents/ResetRules/ResetRules';
 
-const TabHeader = ({ tailoring, securityGuide, profileId, rulesPageLink }) => {
+const TabHeader = ({
+  tailoring,
+  securityGuide,
+  profileId,
+  rulesPageLink,
+  onReset,
+}) => {
   return (
     <TextContent className="pf-v5-u-mt-md">
       <Text component={TextVariants.h3}>
@@ -55,6 +62,8 @@ const TabHeader = ({ tailoring, securityGuide, profileId, rulesPageLink }) => {
               <ExternalLinkAltIcon className="pf-v5-u-ml-sm" />
             </Link>
           )}
+
+          {true && <ResetRules onReset={onReset} />}
         </FlexItem>
       </Flex>
     </TextContent>
@@ -66,6 +75,7 @@ TabHeader.propTypes = {
   securityGuide: propTypes.object,
   profileId: propTypes.string,
   rulesPageLink: propTypes.bool,
+  onReset: propTypes.fn,
 };
 
 export default TabHeader;
