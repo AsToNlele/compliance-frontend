@@ -1,7 +1,6 @@
 import React from 'react';
 import propTypes from 'prop-types';
 import { gql, useQuery } from '@apollo/client';
-import { nowrap } from '@patternfly/react-table';
 import PageHeader, {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
@@ -62,10 +61,7 @@ const ComplianceSystemsBase = ({ error, data, loading, policies }) => {
                   Columns.inventoryColumn('tags'),
                   Columns.OS(apiV2Enabled),
                   Columns.Policies,
-                  Columns.inventoryColumn('updated', {
-                    props: { isStatic: true },
-                    transforms: [nowrap],
-                  }),
+                  Columns.LastSeen,
                 ]}
                 defaultFilter={
                   apiV2Enabled ? DEFAULT_FILTER_REST : DEFAULT_FILTER_GRAPHQL

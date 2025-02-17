@@ -16,6 +16,7 @@ import {
   OperatingSystem as OperatingSystemCell,
   CustomDisplay as CustomDisplayCell,
   FailedRules as FailedRulesCell,
+  LastSeen as LastSeenCell,
 } from './Cells';
 
 const disableSorting = { isStatic: true };
@@ -171,6 +172,15 @@ export const OS = () =>
     renderExport: (cell) => operatingSystemString(cell),
     cell: OperatingSystemCell,
   });
+
+export const LastSeen = {
+  key: 'last_check_in',
+  sortKey: 'last_check_in',
+  title: 'Last seen',
+  props: { width: 10 },
+  transforms: [nowrap],
+  renderFunc: renderComponent(LastSeenCell),
+};
 
 export const inventoryColumn = (column, props) => ({
   key: column,

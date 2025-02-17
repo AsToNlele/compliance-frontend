@@ -16,6 +16,7 @@ import {
   LinkWithPermission as Link,
 } from 'PresentationalComponents';
 import { complianceScoreData, NEVER } from 'Utilities/ruleHelpers';
+import CullingInformation from '@redhat-cloud-services/frontend-components/CullingInfo';
 
 const SystemLink = ({ id, children }) => (
   <Link to={{ pathname: `/systems/${id}` }}>{children}</Link>
@@ -232,3 +233,43 @@ export const operatingSystemString = ({ osMinorVersion, osMajorVersion }) =>
   `RHEL ${osMajorVersion}.${osMinorVersion}`;
 
 export const OperatingSystem = (system) => operatingSystemString(system);
+
+export const LastSeen = ({
+  culled_timestamp: culled,
+  stale_warning_timestamp: staleWarn,
+  stale_timestamp: stale,
+  last_check_in,
+}) => {
+  return CullingInformation ? (
+    <CullingInformation
+      culled={culled}
+      staleWarning={staleWarn}
+      stale={stale}
+      render={({ msg }) => (
+        <React.Fragment>
+          <DateFormat
+            date={last_check_in}
+            extraTitle={
+              <React.Fragment>
+                <div>{msg}</div>
+                Last seen:{` `}
+              </React.Fragment>
+            }
+          />
+        </React.Fragment>
+      )}
+    >
+      {' '}
+      <DateFormat date={last_check_in} />{' '}
+    </CullingInformation>
+  ) : (
+    new Date(last_check_in).toLocaleString()
+  );
+};
+
+LastSeen.propTypes = {
+  culled_timestamp: propTypes.string,
+  stale_warning_timestamp: propTypes.string,
+  stale_timestamp: propTypes.string,
+  last_check_in: propTypes.string,
+};

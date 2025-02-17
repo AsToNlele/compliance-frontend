@@ -279,6 +279,7 @@ export const systemsDataMapper = {
   insights_id: 'insightsId',
   tags: 'tags',
   updated: 'updated',
+  last_check_in: 'last_check_in',
 };
 
 export const testResultsDataMapper = {
