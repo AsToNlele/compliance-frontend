@@ -43,6 +43,7 @@ const useBulkSelect = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const enableBulkSelect = !!onSelect;
+  console.log('bulkselect preselected', preselected);
   const {
     selection: selectedIds,
     set,

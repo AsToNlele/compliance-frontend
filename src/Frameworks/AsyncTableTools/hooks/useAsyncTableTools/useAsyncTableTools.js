@@ -85,6 +85,9 @@ const useAsyncTableTools = (items, columns, options = {}) => {
     itemIdsOnPage: usableItems?.map(({ id }) => id),
   });
 
+  console.log('xdd OPTIONS', options);
+  debugger;
+
   const {
     toolbarProps: tableViewToolbarProps,
     tableProps: tableViewTableProps,

@@ -1,5 +1,7 @@
-import { useReducer } from 'react';
-import reducer, { init as initReducer } from './reducer';
+import { cleanEmpty, init as initReducer } from './reducer';
+import useTableState from '@/Frameworks/AsyncTableTools/hooks/useTableState';
+import { TABLE_STATE_NAMESPACE } from '@/Frameworks/AsyncTableTools/hooks/useSelectionManager/constants';
+import isObject from 'lodash/isObject';
 
 /**
  * Provides a generic API to manage selection stats of one (default) or multiple groups of selections.
@@ -13,35 +15,69 @@ import reducer, { init as initReducer } from './reducer';
  *  @subcategory Hooks
  *
  */
+
 const useSelectionManager = (preselected, options = {}, handleSelect) => {
   const { withGroups = false } = options;
-  const [selection, dispatch] = useReducer(
-    (state, action) => {
-      const newState = reducer(state, action);
+  // const [selection, dispatch] = useReducer(
+  //   (state, action) => {
+  //     const newState = reducer(state, action);
+  //
+  //     if (handleSelect) {
+  //       handleSelect(withGroups ? newState : newState.default);
+  //     }
+  //
+  //     return newState;
+  //   },
+  //   preselected,
+  //   initReducer(withGroups)
+  // );
 
-      if (handleSelect) {
-        handleSelect(withGroups ? newState : newState.default);
-      }
+  const DEFAULT_GROUP_KEY = 'default';
 
-      return newState;
-    },
-    preselected,
-    initReducer(withGroups)
+  const [contextSelection, setContextSelection] = useTableState(
+    TABLE_STATE_NAMESPACE,
+    () => initReducer(preselected, withGroups)
   );
 
-  const set = (items, group) => dispatch({ type: 'set', group, items });
+  console.log('HANDLESELECT', handleSelect);
 
-  const select = (item, group, useSet = false) =>
-    useSet ? set(item, group) : dispatch({ type: 'select', group, item });
+  // const set = (items, group) => dispatch({ type: 'set', group, items });
+  const set = (items, group) => {
+    let finalGroup = group || DEFAULT_GROUP_KEY;
 
-  const deselect = (item, group, useSet = false) =>
-    useSet ? set(item, group) : dispatch({ type: 'deselect', group, item });
+    setContextSelection((prev) =>
+      cleanEmpty({
+        selection: {
+          ...prev?.selection,
+          [finalGroup]:
+            items?.length > 0 || isObject(items) ? items : undefined,
+        },
+      })
+    );
+  };
 
-  const toggle = (item, group) => dispatch({ type: 'toggle', group, item });
+  // const select = (item, group, useSet = false) =>
+  //   useSet ? set(item, group) : dispatch({ type: 'select', group, item });
+  //
+  // const deselect = (item, group, useSet = false) => {
+  //   return useSet
+  //     ? set(item, group)
+  //     : dispatch({ type: 'deselect', group, item });
+  // };
+  //
+  // const toggle = (item, group) => dispatch({ type: 'toggle', group, item });
+  //
+  // const reset = () => dispatch({ type: 'reset', preselected });
+  //
+  // const clear = () => dispatch({ type: 'clear' });
 
-  const reset = () => dispatch({ type: 'reset', preselected });
+  const select = () => {};
+  const deselect = () => {};
+  const reset = () => {};
+  const clear = () => {};
+  const toggle = () => {};
 
-  const clear = () => dispatch({ type: 'clear' });
+  console.log('xdd selection in sel manag', contextSelection);
 
   return {
     set,
@@ -50,7 +86,9 @@ const useSelectionManager = (preselected, options = {}, handleSelect) => {
     toggle,
     reset,
     clear,
-    selection: withGroups ? selection : selection.default,
+    selection: withGroups
+      ? contextSelection?.selection || []
+      : contextSelection?.selection?.default || [],
   };
 };
 

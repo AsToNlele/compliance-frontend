@@ -33,7 +33,14 @@ export const itemForLabelInGroups = (configItem, label) =>
     ({ label: ItemLabel }) => `${ItemLabel}` === `${label}`
   );
 
-export const isNotEmpty = (value) =>
-  (isArray(value) && value?.length > 0) ||
-  value !== '' ||
-  (isObject(value) && Object.keys(value).length > 0);
+export const isNotEmpty = (value) => {
+  if (isArray(value)) {
+    return value?.length > 0;
+  } else if (value === '') {
+    return false;
+  } else if (isObject(value)) {
+    return Object.keys(value).length > 0;
+  } else {
+    return false;
+  }
+};

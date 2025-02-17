@@ -11,20 +11,29 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { LinkWithPermission as Link } from 'PresentationalComponents';
 import OsVersionText from '../../TabbedRules/OsVersionText';
 import { SSGVersionText } from '../../TabbedRules/ProfileTabContent';
+import ResetRules from 'PresentationalComponents/ResetRules/ResetRules';
 
-const TabHeader = ({ tailoring, securityGuide, profileId, rulesPageLink }) => {
+const TabHeader = ({
+  tailoring,
+  securityGuide,
+  profileId,
+  rulesPageLink,
+  onReset,
+}) => {
+  const osMajorVersion =
+    tailoring?.os_major_version || securityGuide?.osMajorVersion;
+  const osMinorVersion =
+    tailoring?.os_minor_version || securityGuide?.osMinorVersion;
+  const securityGuideId = securityGuide?.id;
+
   return (
     <TextContent className="pf-v5-u-mt-md">
       <Text component={TextVariants.h3}>
         <span className="pf-v5-u-pr-sm">
           <OsVersionText
             profile={{
-              osMajorVersion:
-                tailoring?.os_major_version || securityGuide?.osMajorVersion,
-              osMinorVersion:
-                tailoring?.os_minor_version != null
-                  ? tailoring.os_minor_version
-                  : securityGuide?.osMinorVersion,
+              osMajorVersion,
+              osMinorVersion,
             }}
           />
         </span>
@@ -55,6 +64,14 @@ const TabHeader = ({ tailoring, securityGuide, profileId, rulesPageLink }) => {
               <ExternalLinkAltIcon className="pf-v5-u-ml-sm" />
             </Link>
           )}
+
+          {true && (
+            <ResetRules
+              securityGuideId={securityGuideId}
+              osMinorVersion={osMinorVersion}
+              onReset={onReset}
+            />
+          )}
         </FlexItem>
       </Flex>
     </TextContent>
@@ -66,6 +83,7 @@ TabHeader.propTypes = {
   securityGuide: propTypes.object,
   profileId: propTypes.string,
   rulesPageLink: propTypes.bool,
+  onReset: propTypes.fn,
 };
 
 export default TabHeader;
