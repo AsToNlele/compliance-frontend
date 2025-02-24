@@ -4,10 +4,15 @@ import uniq from 'lodash/uniq';
 const DEFAULT_GROUP_KEY = 'default';
 const selectionGroup = (action) => action.group || DEFAULT_GROUP_KEY;
 
-export const init = (withGroups) => (preselected) =>
-  withGroups ? preselected || {} : { default: preselected || [] };
+export const init = (preselected, withGroups) => {
+  console.log('RUUN');
+  debugger;
+  return withGroups
+    ? { selection: preselected || [] }
+    : { selection: { default: preselected || [] } };
+};
 
-const cleanEmpty = (state) =>
+export const cleanEmpty = (state) =>
   Object.entries(state).reduce((newState, [key, value]) => {
     if (value !== undefined && value.length !== 0) {
       return {
@@ -57,10 +62,12 @@ const deselect = (state = {}, action) => {
     return !deselectItems.includes(selectedItem);
   });
 
-  return cleanEmpty({
+  const res = cleanEmpty({
     ...state,
     [group]: items.length === 0 ? undefined : items,
   });
+  debugger;
+  return res;
 };
 
 const toggle = (state, action) => {

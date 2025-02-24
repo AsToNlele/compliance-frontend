@@ -52,7 +52,9 @@ export const filtersSerialiser = (state, filters) => {
   const queryParts = Object.entries(state || {}).reduce(
     (filterQueryParts, [filterId, value]) => {
       const filterConfigItem = filters.find((filter) => filter.id === filterId);
-      const filterSerialiser = findFilterSerialiser(filterConfigItem);
+      const filterSerialiser = filterConfigItem
+        ? findFilterSerialiser(filterConfigItem)
+        : null;
 
       return [
         ...filterQueryParts,

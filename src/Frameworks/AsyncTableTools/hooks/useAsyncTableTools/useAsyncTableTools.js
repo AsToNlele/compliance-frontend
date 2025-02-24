@@ -76,6 +76,8 @@ const useAsyncTableTools = (items, columns, options = {}) => {
     total: usableItems?.length || 0,
   });
 
+  console.log('OPTIONS', options);
+
   const {
     toolbarProps: bulkSelectToolbarProps,
     tableProps: bulkSelectTableProps,

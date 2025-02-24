@@ -29,7 +29,7 @@ export const EditPolicyProfilesRulesRest = ({
   osMinorVersionCounts,
   valueOverrides = {},
 }) => {
-  const preselected =
+  const selected =
     selectedRuleRefIds &&
     (selectedRuleRefIds || []).reduce(
       (prev, cur) => ({
@@ -57,6 +57,14 @@ export const EditPolicyProfilesRulesRest = ({
     ),
     skip: skipFetchingProfileRuleIds,
   });
+
+  const preselected = osMinorVersionCounts?.map(({ osMinorVersion }) => ({
+    osMinorVersion,
+    ruleRefIds: profilesAndRuleIds?.find(
+      ({ osMinorVersion: profileOsMinorVersion }) =>
+        profileOsMinorVersion === osMinorVersion
+    )?.ruleIds,
+  }));
 
   const onSelect = useCallback(
     (
@@ -90,18 +98,23 @@ export const EditPolicyProfilesRulesRest = ({
     [change, selectedRuleRefIds]
   );
 
+  const resetRules = (securityGuideId, osMinorVersion) => {
+    console.log(securityGuideId, osMinorVersion);
+    console.log(preselected);
+    const preselectedRules = preselected.find(
+      (el) => el.osMinorVersion === osMinorVersion
+    )?.ruleRefIds;
+    if (preselectedRules == null) return;
+    onSelect(
+      securityGuideId,
+      { os_minor_version: osMinorVersion },
+      preselectedRules
+    );
+  };
+
   useDeepCompareEffectNoCheck(() => {
     if (profilesAndRuleIds !== undefined && selectedRuleRefIds === undefined) {
-      change(
-        'selectedRuleRefIds',
-        osMinorVersionCounts.map(({ osMinorVersion }) => ({
-          osMinorVersion,
-          ruleRefIds: profilesAndRuleIds.find(
-            ({ osMinorVersion: profileOsMinorVersion }) =>
-              profileOsMinorVersion === osMinorVersion
-          ).ruleIds,
-        }))
-      );
+      change('selectedRuleRefIds', preselected);
     }
   }, [change, osMinorVersionCounts, profilesAndRuleIds, selectedRuleRefIds]);
 
@@ -135,7 +148,7 @@ export const EditPolicyProfilesRulesRest = ({
     !preselectedRuleIdsLoading &&
     Object.keys(profilesAndRuleIds || {}).length === 0;
 
-  return !preselected ? (
+  return !selected ? (
     <Bullseye>
       <Spinner />
     </Bullseye>
@@ -184,7 +197,8 @@ export const EditPolicyProfilesRulesRest = ({
             columns={[Columns.Name, Columns.Severity, Columns.Remediation]}
             ouiaId="RHELVersions"
             onSelect={onSelect}
-            preselected={preselected}
+            onReset={resetRules}
+            selected={selected}
             enableSecurityGuideRulesToggle
             rulesPageLink={true}
             valueOverrides={valueOverrides}

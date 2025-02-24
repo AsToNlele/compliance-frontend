@@ -39,6 +39,8 @@ const useFilterConfig = (options = {}) => {
     { withGroups: true }
   );
 
+  console.log('useselectionmanager selection', activeFilters);
+
   const { onFilterUpdate, onFilterDelete } = useEventHandlers({
     ...options,
     activeFilters,

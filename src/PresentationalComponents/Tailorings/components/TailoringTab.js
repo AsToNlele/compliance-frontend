@@ -54,12 +54,13 @@ const TailoringTab = ({
   systemCount,
   rulesTableProps,
   resetLink,
+  onReset,
   rulesPageLink,
   setRuleValues,
   onRuleValueReset,
   onValueOverrideSave,
   onSelect,
-  preselected,
+  selected,
   enableSecurityGuideRulesToggle,
 }) => {
   const tableState = useFullTableState();
@@ -116,7 +117,7 @@ const TailoringTab = ({
       ? buildTreeTable(
           tailoringRuleTree || securityGuideRuleTree,
           ruleGroups?.data,
-          preselected
+          selected
         )
       : undefined;
 
@@ -160,6 +161,7 @@ const TailoringTab = ({
             }
             profileId={profileId || tailoring.profile_id}
             rulesPageLink={rulesPageLink}
+            onReset={onReset}
             resetLink={resetLink}
             systemCount={systemCount}
           />
@@ -189,7 +191,7 @@ const TailoringTab = ({
         onRuleValueReset={onRuleValueReset}
         onValueOverrideSave={onValueSave}
         onSelect={onSelect ? onSelectRule : undefined}
-        selectedRules={preselected}
+        selectedRules={selected}
         options={{
           exporter,
           itemIdsInTable,
@@ -229,7 +231,8 @@ TailoringTab.propTypes = {
   setRuleValues: propTypes.func,
   onRuleValueReset: propTypes.func,
   onValueOverrideSave: propTypes.func,
-  preselected: propTypes.object,
+  onReset: propTypes.func,
+  selected: propTypes.object,
   enableSecurityGuideRulesToggle: propTypes.bool,
 };
 

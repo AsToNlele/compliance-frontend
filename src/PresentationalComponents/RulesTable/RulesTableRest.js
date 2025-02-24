@@ -77,6 +77,10 @@ const RulesTable = ({
   const showRuleStateFilter =
     columns.filter((c) => c.title === 'Rule state').length > 0;
 
+  // console.log('xddd prop', selectedRulesProp, onSelect);
+  // console.log('xddd internal', internalSelectedState);
+  // console.log('xddd final', selectedRules, setSelectedRules);
+
   // TODO implement policies filter
   const policies = [];
 
