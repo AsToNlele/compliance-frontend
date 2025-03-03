@@ -15,8 +15,10 @@ import reducer, { init as initReducer } from './reducer';
  */
 const useSelectionManager = (preselected, options = {}, handleSelect) => {
   const { withGroups = false } = options;
+  console.log('preselected hehe', { preselected });
   const [selection, dispatch] = useReducer(
     (state, action) => {
+      console.log(state);
       const newState = reducer(state, action);
 
       if (handleSelect) {
@@ -31,8 +33,13 @@ const useSelectionManager = (preselected, options = {}, handleSelect) => {
 
   const set = (items, group) => dispatch({ type: 'set', group, items });
 
-  const select = (item, group, useSet = false) =>
-    useSet ? set(item, group) : dispatch({ type: 'select', group, item });
+  const select = (item, group, useSet = false) => {
+    console.log('SELECT ', group, item);
+    debugger;
+    return useSet
+      ? set(item, group)
+      : dispatch({ type: 'select', group, item });
+  };
 
   const deselect = (item, group, useSet = false) =>
     useSet ? set(item, group) : dispatch({ type: 'deselect', group, item });

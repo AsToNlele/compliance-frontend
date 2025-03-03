@@ -29,7 +29,7 @@ export const EditPolicyProfilesRulesRest = ({
   osMinorVersionCounts,
   valueOverrides = {},
 }) => {
-  const preselected =
+  const selected =
     selectedRuleRefIds &&
     (selectedRuleRefIds || []).reduce(
       (prev, cur) => ({
@@ -58,12 +58,28 @@ export const EditPolicyProfilesRulesRest = ({
     skip: skipFetchingProfileRuleIds,
   });
 
+  const preselected = osMinorVersionCounts?.map(({ osMinorVersion }) => ({
+    osMinorVersion,
+    ruleRefIds: profilesAndRuleIds?.find(
+      ({ osMinorVersion: profileOsMinorVersion }) =>
+        profileOsMinorVersion === osMinorVersion
+    )?.ruleIds,
+  }));
+
+  const preselectedRules = preselected;
+  console.log({ preselectedRules });
+
   const onSelect = useCallback(
     (
       _securityGuideId,
       { os_minor_version: osMinorVersion },
       newSelectedRuleIds
     ) => {
+      console.log('ON SELECT');
+      console.log('sec guide id', _securityGuideId);
+      console.log('osminorversion', osMinorVersion);
+      console.log('new selected', newSelectedRuleIds);
+      debugger;
       const updatedSelectedRuleRefIds = structuredClone(
         selectedRuleRefIds || []
       );
@@ -90,18 +106,29 @@ export const EditPolicyProfilesRulesRest = ({
     [change, selectedRuleRefIds]
   );
 
+  console.log({ preselected });
+
+  const resetRules = (securityGuideId, osMinorVersion) => {
+    console.log('resetRules', securityGuideId, osMinorVersion, preselected);
+    // const preselectedRuleee = preselected;
+    const currentPreselectedRules = preselected.find(
+      (el) => el.osMinorVersion === osMinorVersion
+    )?.ruleRefIds;
+    if (currentPreselectedRules == null) return;
+
+    console.log(currentPreselectedRules);
+
+    debugger;
+    onSelect?.(
+      securityGuideId,
+      { os_minor_version: osMinorVersion },
+      currentPreselectedRules
+    );
+  };
+
   useDeepCompareEffectNoCheck(() => {
     if (profilesAndRuleIds !== undefined && selectedRuleRefIds === undefined) {
-      change(
-        'selectedRuleRefIds',
-        osMinorVersionCounts.map(({ osMinorVersion }) => ({
-          osMinorVersion,
-          ruleRefIds: profilesAndRuleIds.find(
-            ({ osMinorVersion: profileOsMinorVersion }) =>
-              profileOsMinorVersion === osMinorVersion
-          ).ruleIds,
-        }))
-      );
+      change('selectedRuleRefIds', preselected);
     }
   }, [change, osMinorVersionCounts, profilesAndRuleIds, selectedRuleRefIds]);
 
@@ -135,7 +162,7 @@ export const EditPolicyProfilesRulesRest = ({
     !preselectedRuleIdsLoading &&
     Object.keys(profilesAndRuleIds || {}).length === 0;
 
-  return !preselected ? (
+  return !selected ? (
     <Bullseye>
       <Spinner />
     </Bullseye>
@@ -184,7 +211,8 @@ export const EditPolicyProfilesRulesRest = ({
             columns={[Columns.Name, Columns.Severity, Columns.Remediation]}
             ouiaId="RHELVersions"
             onSelect={onSelect}
-            preselected={preselected}
+            onReset={resetRules}
+            selected={selected}
             enableSecurityGuideRulesToggle
             rulesPageLink={true}
             valueOverrides={valueOverrides}
