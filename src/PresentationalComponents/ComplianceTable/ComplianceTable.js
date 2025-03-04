@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { Spinner, Bullseye } from '@patternfly/react-core';
 import propTypes from 'prop-types';
 import AsyncTableToolsTable from '@/Frameworks/AsyncTableTools/components/AsyncTableToolsTable';
@@ -21,8 +21,9 @@ import {
  *  @category Compliance
  *
  */
-const ComplianceTable = (props) => {
+const ComplianceTable = forwardRef((props, ref) => {
   const apiV2Enabled = useAPIV2FeatureFlag();
+  console.log('deez compliancetable ref', ref);
 
   return apiV2Enabled === undefined ? (
     <Bullseye>
@@ -30,6 +31,7 @@ const ComplianceTable = (props) => {
     </Bullseye>
   ) : apiV2Enabled ? (
     <AsyncTableToolsTable
+      ref={ref}
       {...props}
       options={{
         serialisers: {
@@ -43,7 +45,7 @@ const ComplianceTable = (props) => {
   ) : (
     <TableToolsTable {...props} />
   );
-};
+});
 
 ComplianceTable.propTypes = {
   options: propTypes.object,

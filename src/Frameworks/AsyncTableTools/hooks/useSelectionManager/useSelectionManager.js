@@ -29,6 +29,8 @@ const useSelectionManager = (preselected, options = {}, handleSelect) => {
     initReducer(withGroups)
   );
 
+  console.log('deez', { selection, preselected });
+
   const set = (items, group) => dispatch({ type: 'set', group, items });
 
   const select = (item, group, useSet = false) =>

@@ -26,13 +26,14 @@ import { toToolbarActions } from './helpers';
  *  @param   {object}                   columns   An array of columns to render the items/rows with
  *  @param   {object}                   [options] AsyncTableTools options
  *
+ *  @param                              ref
  *  @returns {useAsyncTableToolsReturn}           An object of props meant to be used in the {@link AsyncTableToolsTable}
  *
  *  @category AsyncTableTools
  *  @subcategory Hooks
  *
  */
-const useAsyncTableTools = (items, columns, options = {}) => {
+const useAsyncTableTools = (items, columns, options = {}, ref) => {
   const {
     toolbarProps: toolbarPropsOption,
     tableProps: tablePropsOption,
@@ -41,6 +42,8 @@ const useAsyncTableTools = (items, columns, options = {}) => {
   } = options;
   const { loaded, items: usableItems } = useItems(items);
   const actionResolverEnabled = usableItems?.length > 0;
+
+  console.log('deez useasynctabletools ref', ref);
 
   const {
     columnManagerAction,
@@ -80,10 +83,13 @@ const useAsyncTableTools = (items, columns, options = {}) => {
     toolbarProps: bulkSelectToolbarProps,
     tableProps: bulkSelectTableProps,
     tableView: bulkSelectTableViewOptions,
-  } = useBulkSelect({
-    ...options,
-    itemIdsOnPage: usableItems?.map(({ id }) => id),
-  });
+  } = useBulkSelect(
+    {
+      ...options,
+      itemIdsOnPage: usableItems?.map(({ id }) => id),
+    },
+    ref
+  );
 
   const {
     toolbarProps: tableViewToolbarProps,

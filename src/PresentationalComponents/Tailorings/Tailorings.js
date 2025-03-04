@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import propTypes from 'prop-types';
 import { Badge, Flex, FlexItem, Spinner, Tab } from '@patternfly/react-core';
 import {
@@ -36,133 +36,143 @@ import NoTailorings from './NoTailorings';
  *  @param   {object}             [props.valueOverrides]                 **deprecated** It should be calles "ruleValues"
  *  @param                        [props.rulesPageLink]
  *
+ *  @param                        props.ref
  *  @returns {React.ReactElement}
  *
  *  @category Compliance
  *  @tutorial how-to-use-tailorings
  *
  */
-const Tailorings = ({
-  policy,
-  profiles,
-  defaultTab,
-  columns,
-  level = 0,
-  ouiaId,
-  rulesPageLink,
-  onValueOverrideSave,
-  onSelect,
-  preselected,
-  enableSecurityGuideRulesToggle,
-  selectedVersionCounts,
-  valueOverrides,
-  ...rulesTableProps
-}) => {
-  const {
-    data: tailoringsData,
-    loading: tailoringsLoading,
-    error: tailoringsError,
-  } = useTailorings({
-    params: {
-      policyId: policy?.id,
-      filter: 'NOT(null? os_minor_version)',
-      sortBy: 'os_minor_version:desc',
+const Tailorings = forwardRef(
+  (
+    {
+      policy,
+      profiles,
+      defaultTab,
+      columns,
+      level = 0,
+      ouiaId,
+      rulesPageLink,
+      onValueOverrideSave,
+      onSelect,
+      preselected,
+      enableSecurityGuideRulesToggle,
+      selectedVersionCounts,
+      valueOverrides,
+      ...rulesTableProps
     },
-    skip: !policy,
-  });
+    ref
+  ) => {
+    const {
+      data: tailoringsData,
+      loading: tailoringsLoading,
+      error: tailoringsError,
+    } = useTailorings({
+      params: {
+        policyId: policy?.id,
+        filter: 'NOT(null? os_minor_version)',
+        sortBy: 'os_minor_version:desc',
+      },
+      skip: !policy,
+    });
 
-  const tabs = [
-    ...(policy && tailoringsData?.data ? tailoringsData.data : []),
-    ...(profiles?.map((profile) => ({
-      ...profile,
-      os_major_version: profile.osMajorVersion,
-      os_minor_version: profile.osMinorVersion,
-      // TODO this cam be done smarter. We can pass the properties for the tab directly here
-      isSecurityGuide: true,
-    })) || []),
-  ];
+    console.log('deez tailorings ref', ref);
 
-  const onValueSave = (...valueParams) =>
-    onValueOverrideSave?.(policy, ...valueParams);
+    const tabs = [
+      ...(policy && tailoringsData?.data ? tailoringsData.data : []),
+      ...(profiles?.map((profile) => ({
+        ...profile,
+        os_major_version: profile.osMajorVersion,
+        os_minor_version: profile.osMinorVersion,
+        // TODO this cam be done smarter. We can pass the properties for the tab directly here
+        isSecurityGuide: true,
+      })) || []),
+    ];
 
-  const onSelectTailoring = (...tabParams) => onSelect?.(policy, ...tabParams);
+    const onValueSave = (...valueParams) =>
+      onValueOverrideSave?.(policy, ...valueParams);
 
-  return (
-    <StateViewWithError
-      stateValues={{
-        error: tailoringsError,
-        data: tabs && (tailoringsData || profiles),
-        loading: tailoringsLoading,
-      }}
-    >
-      <StateViewPart stateKey="loading">
-        <Spinner />
-      </StateViewPart>
-      <StateViewPart stateKey="data">
-        {tabs.length > 0 ? (
-          <RoutedTabs
-            ouiaId={ouiaId}
-            level={level}
-            defaultTab={eventKey(tabs[0])}
-          >
-            {tabs?.map((tab) => (
-              <Tab
-                key={eventKey(tab)}
-                eventKey={eventKey(tab)}
-                aria-label={`Rules for RHEL ${tab.os_major_version}.${tab.os_minor_version}`}
-                title={
-                  <Flex spaceItems={{ default: 'spaceItemsSm' }}>
-                    <FlexItem>
-                      <OsVersionText
-                        profile={{
-                          osMajorVersion: tab.os_major_version,
-                          osMinorVersion: tab.os_minor_version,
-                        }}
-                      />
-                    </FlexItem>
-                    {selectedVersionCounts?.[tab.os_minor_version] && (
+    const onSelectTailoring = (...tabParams) =>
+      onSelect?.(policy, ...tabParams);
+
+    return (
+      <StateViewWithError
+        stateValues={{
+          error: tailoringsError,
+          data: tabs && (tailoringsData || profiles),
+          loading: tailoringsLoading,
+        }}
+      >
+        <StateViewPart stateKey="loading">
+          <Spinner />
+        </StateViewPart>
+        <StateViewPart stateKey="data">
+          {tabs.length > 0 ? (
+            <RoutedTabs
+              ouiaId={ouiaId}
+              level={level}
+              defaultTab={eventKey(tabs[0])}
+            >
+              {tabs?.map((tab) => (
+                <Tab
+                  key={eventKey(tab)}
+                  eventKey={eventKey(tab)}
+                  aria-label={`Rules for RHEL ${tab.os_major_version}.${tab.os_minor_version}`}
+                  title={
+                    <Flex spaceItems={{ default: 'spaceItemsSm' }}>
                       <FlexItem>
-                        <Badge isRead>
-                          {selectedVersionCounts[tab.os_minor_version]}
-                        </Badge>
+                        <OsVersionText
+                          profile={{
+                            osMajorVersion: tab.os_major_version,
+                            osMinorVersion: tab.os_minor_version,
+                          }}
+                        />
                       </FlexItem>
-                    )}
-                  </Flex>
-                }
-                ouiaId={`RHEL ${tab.os_major_version}.${tab.os_minor_version}`}
-              >
-                <TailoringTab
-                  {...{
-                    ...(tab.isSecurityGuide
-                      ? {
-                          securityGuideId: tab.securityGuideId,
-                          profileId: tab.profileId,
-                          osMajorVersion: tab.os_major_version,
-                          osMinorVersion: tab.os_minor_version,
-                        }
-                      : { policy, tailoring: tab }),
-                    columns,
-                    enableSecurityGuideRulesToggle,
-                    rulesTableProps,
-                    onValueOverrideSave: onValueSave,
-                    ...(onSelect ? { onSelect: onSelectTailoring } : {}),
-                    preselected:
-                      preselected?.[tab.id] ||
-                      preselected?.[tab.os_minor_version],
-                    rulesPageLink: rulesPageLink,
-                    ruleValues: valueOverrides,
-                  }}
-                />
-              </Tab>
-            ))}
-          </RoutedTabs>
-        ) : (
-          <NoTailorings policy={policy} columns={columns} />
-        )}
-      </StateViewPart>
-    </StateViewWithError>
-  );
-};
+                      {selectedVersionCounts?.[tab.os_minor_version] && (
+                        <FlexItem>
+                          <Badge isRead>
+                            {selectedVersionCounts[tab.os_minor_version]}
+                          </Badge>
+                        </FlexItem>
+                      )}
+                    </Flex>
+                  }
+                  ouiaId={`RHEL ${tab.os_major_version}.${tab.os_minor_version}`}
+                >
+                  <TailoringTab
+                    ref={tab.os_minor_version === 9 ? ref : null}
+                    {...{
+                      ...(tab.isSecurityGuide
+                        ? {
+                            securityGuideId: tab.securityGuideId,
+                            profileId: tab.profileId,
+                            osMajorVersion: tab.os_major_version,
+                            osMinorVersion: tab.os_minor_version,
+                          }
+                        : { policy, tailoring: tab }),
+                      columns,
+                      enableSecurityGuideRulesToggle,
+                      rulesTableProps,
+                      onValueOverrideSave: onValueSave,
+                      ...(onSelect ? { onSelect: onSelectTailoring } : {}),
+                      preselected:
+                        preselected?.[tab.id] ||
+                        preselected?.[tab.os_minor_version],
+                      rulesPageLink: rulesPageLink,
+                      ruleValues: valueOverrides,
+                    }}
+                  />
+                </Tab>
+              ))}
+            </RoutedTabs>
+          ) : (
+            <NoTailorings policy={policy} columns={columns} />
+          )}
+        </StateViewPart>
+      </StateViewWithError>
+    );
+  }
+);
 
 Tailorings.propTypes = {
   columns: propTypes.arrayOf(propTypes.object),

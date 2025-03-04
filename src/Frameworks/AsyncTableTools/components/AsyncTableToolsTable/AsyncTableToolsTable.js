@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import propTypes from 'prop-types';
 import { Pagination, PaginationVariant } from '@patternfly/react-core';
 import {
@@ -34,66 +34,81 @@ import useAsyncTableTools from '../../hooks/useAsyncTableTools';
  *  @subcategory Components
  *
  */
-const AsyncTableToolsTable = ({
-  items,
-  columns,
-  filters,
-  total,
-  loading,
-  options,
-  // TODO I'm not sure if we need this level of customisation.
-  // It might actually hurt in the long run. Consider removing until we really have the case where we need this
-  toolbarProps: toolbarPropsProp,
-  tableHeaderProps,
-  tableBodyProps,
-  tableToolbarProps,
-  paginationProps,
-  ...tablePropsRest
-}) => {
-  const { loaded, toolbarProps, tableProps, ColumnManager, TableViewToggle } =
-    useAsyncTableTools(items, columns, {
+const AsyncTableToolsTable = forwardRef(
+  (
+    {
+      items,
+      columns,
       filters,
+      total,
+      loading,
+      options,
+      // TODO I'm not sure if we need this level of customisation.
+      // It might actually hurt in the long run. Consider removing until we really have the case where we need this
       toolbarProps: toolbarPropsProp,
-      tableProps: tablePropsRest,
-      numberOfItems: total,
-      ...options,
-    });
+      tableHeaderProps,
+      tableBodyProps,
+      tableToolbarProps,
+      paginationProps,
+      ...tablePropsRest
+    },
+    ref
+  ) => {
+    // if (ref.current != null) {
+    //   ref.current.xd = 'vivon';
+    // }
+    // // ref?.current?.xd = 'vivon';
+    console.log('deez asynctabletools', ref);
+    const { loaded, toolbarProps, tableProps, ColumnManager, TableViewToggle } =
+      useAsyncTableTools(
+        items,
+        columns,
+        {
+          filters,
+          toolbarProps: toolbarPropsProp,
+          tableProps: tablePropsRest,
+          numberOfItems: total,
+          ...options,
+        },
+        ref
+      );
 
-  const skeletonLoading = !loaded || loading;
+    const skeletonLoading = !loaded || loading;
 
-  return (
-    <>
-      <PrimaryToolbar aria-label="Table toolbar" {...toolbarProps}>
-        {TableViewToggle && <TableViewToggle />}
-      </PrimaryToolbar>
+    return (
+      <>
+        <PrimaryToolbar aria-label="Table toolbar" {...toolbarProps}>
+          {TableViewToggle && <TableViewToggle />}
+        </PrimaryToolbar>
 
-      {skeletonLoading ? (
-        <SkeletonTable
-          rowSize={toolbarProps?.pagination?.perPage || 10}
-          columns={columns.map(({ title }) => title)}
-        />
-      ) : (
-        <Table {...tableProps}>
-          <TableHeader {...tableHeaderProps} />
-          <TableBody {...tableBodyProps} />
-        </Table>
-      )}
-
-      <TableToolbar isFooter {...tableToolbarProps}>
-        {toolbarProps.pagination && (
-          <Pagination
-            aria-label="Pagination-ToolBar"
-            variant={PaginationVariant.bottom}
-            {...toolbarProps.pagination}
-            {...paginationProps}
+        {skeletonLoading ? (
+          <SkeletonTable
+            rowSize={toolbarProps?.pagination?.perPage || 10}
+            columns={columns.map(({ title }) => title)}
           />
+        ) : (
+          <Table {...tableProps}>
+            <TableHeader {...tableHeaderProps} />
+            <TableBody {...tableBodyProps} />
+          </Table>
         )}
-      </TableToolbar>
 
-      {ColumnManager && <ColumnManager />}
-    </>
-  );
-};
+        <TableToolbar isFooter {...tableToolbarProps}>
+          {toolbarProps.pagination && (
+            <Pagination
+              aria-label="Pagination-ToolBar"
+              variant={PaginationVariant.bottom}
+              {...toolbarProps.pagination}
+              {...paginationProps}
+            />
+          )}
+        </TableToolbar>
+
+        {ColumnManager && <ColumnManager />}
+      </>
+    );
+  }
+);
 
 AsyncTableToolsTable.propTypes = {
   items: propTypes.oneOfType([propTypes.array, propTypes.func]).isRequired,

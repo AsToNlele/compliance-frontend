@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useImperativeHandle, useState } from 'react';
 import useSelectionManager from '../useSelectionManager';
 import {
   checkCurrentPageSelected,
@@ -27,20 +27,24 @@ import {
  *  @param   {Array}               [options.itemIdsOnPage]  Array of item ids visible on the page
  *  @param   {string}              [options.identifier]     Property of the items that should be used as ID to select them
  *
+ *  @param                         ref
  *  @returns {useBulkSelectReturn}                          Functions and props to use for setting up bulk selection
  *
  *  @category AsyncTableTools
  *  @subcategory Hooks
  *
  */
-const useBulkSelect = ({
-  total = 0,
-  onSelect,
-  preselected,
-  itemIdsInTable,
-  itemIdsOnPage,
-  identifier = 'itemId',
-}) => {
+const useBulkSelect = (
+  {
+    total = 0,
+    onSelect,
+    preselected,
+    itemIdsInTable,
+    itemIdsOnPage,
+    identifier = 'itemId',
+  },
+  ref
+) => {
   const [loading, setLoading] = useState(false);
   const enableBulkSelect = !!onSelect;
   const {
@@ -57,6 +61,26 @@ const useBulkSelect = ({
   const currentPageSelected = checkCurrentPageSelected(
     itemIdsOnPage,
     selectedIds
+  );
+
+  console.log('deez bulk', { set, selectedIds, ref });
+
+  // if (ref != null) {
+  //   ref.current.refresh = (ids) => set(ids);
+  // }
+
+  console.log('deez bulk ref', ref);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      refresh: (ids) => {
+        console.log('deez useimperative refresh ids', ids);
+        set(ids);
+        console.log('deez calling set');
+      },
+    }),
+    [set]
   );
 
   // TODO this is not totally wrong, but when the tree view is active there is currently no total, which causes the selection to be disabled there.

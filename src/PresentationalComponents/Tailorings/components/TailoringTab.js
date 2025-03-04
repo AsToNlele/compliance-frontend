@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import propTypes from 'prop-types';
 import { Grid } from '@patternfly/react-core';
 import TableStateProvider from '@/Frameworks/AsyncTableTools/components/TableStateProvider';
@@ -42,168 +42,177 @@ import SecurityGuideRulesToggle from './SecurityGuideRulesToggle';
  *  @tutorial how-to-use-tailorings
  *
  */
-const TailoringTab = ({
-  policy,
-  tailoring,
-  securityGuideId: securityGuideIdProp,
-  osMajorVersion,
-  osMinorVersion,
-  profileId,
-  ruleValues,
-  columns,
-  systemCount,
-  rulesTableProps,
-  resetLink,
-  rulesPageLink,
-  setRuleValues,
-  onRuleValueReset,
-  onValueOverrideSave,
-  onSelect,
-  preselected,
-  enableSecurityGuideRulesToggle,
-}) => {
-  const tableState = useFullTableState();
-  const openRuleGroups = tableState?.tableState?.['open-items'];
-  const groupFilter =
-    tableState?.tableState?.tableView === 'tree' && openRuleGroups?.length > 0
-      ? `rule_group_id ^ (${openRuleGroups.map((id) => `${id}`).join(' ')})`
-      : undefined;
-  const securityGuideId = securityGuideIdProp || tailoring?.security_guide_id;
-  const shouldSkip = skips({
-    policy,
-    tailoring,
-    securityGuideId,
-    profileId,
-    tableState,
-  });
-
-  const {
-    data: {
-      securityGuide,
-      ruleGroups,
-      ruleTree: securityGuideRuleTree,
-      rules: securityGuideRules,
-      valueDefinitions,
+const TailoringTab = forwardRef(
+  (
+    {
+      policy,
+      tailoring,
+      securityGuideId: securityGuideIdProp,
+      osMajorVersion,
+      osMinorVersion,
+      profileId,
+      ruleValues,
+      columns,
+      systemCount,
+      rulesTableProps,
+      resetLink,
+      rulesPageLink,
+      setRuleValues,
+      onRuleValueReset,
+      onValueOverrideSave,
+      onSelect,
+      preselected,
+      enableSecurityGuideRulesToggle,
     },
-    fetchBatchedRules,
-  } = useSecurityGuideData({
-    securityGuideId,
-    profileId,
-    skipRules: shouldSkip.securityGuide.rules,
-    skipRuleTree: shouldSkip.securityGuide.ruleTree,
-    skipRuleGroups: shouldSkip.securityGuide.ruleGroups,
-    skipValueDefinitions: shouldSkip.securityGuide.valueDefinitions,
-    skipProfileRules: shouldSkip.securityGuide.profile.rules,
-    skipProfileTree: shouldSkip.securityGuide.profile.ruleTree,
-    ...(groupFilter ? { groupFilter } : {}),
-    tableState,
-  });
+    ref
+  ) => {
+    const tableState = useFullTableState();
+    const openRuleGroups = tableState?.tableState?.['open-items'];
+    const groupFilter =
+      tableState?.tableState?.tableView === 'tree' && openRuleGroups?.length > 0
+        ? `rule_group_id ^ (${openRuleGroups.map((id) => `${id}`).join(' ')})`
+        : undefined;
+    const securityGuideId = securityGuideIdProp || tailoring?.security_guide_id;
+    const shouldSkip = skips({
+      policy,
+      tailoring,
+      securityGuideId,
+      profileId,
+      tableState,
+    });
 
-  const {
-    data: { ruleTree: tailoringRuleTree, rules: tailoringRules },
-    fetchBatchedTailoringRules,
-  } = useTailoringsData({
-    policy,
-    tailoring,
-    tableState,
-    skipRules: shouldSkip.tailoring.rules,
-    skipRuleTree: shouldSkip.tailoring.ruleTree,
-    ...(groupFilter ? { groupFilter } : {}),
-  });
-  const rules = tailoringRules || securityGuideRules;
-  const ruleTree =
-    ruleGroups && (tailoringRuleTree || securityGuideRuleTree)
-      ? buildTreeTable(
-          tailoringRuleTree || securityGuideRuleTree,
-          ruleGroups?.data,
-          preselected
-        )
-      : undefined;
+    const {
+      data: {
+        securityGuide,
+        ruleGroups,
+        ruleTree: securityGuideRuleTree,
+        rules: securityGuideRules,
+        valueDefinitions,
+      },
+      fetchBatchedRules,
+    } = useSecurityGuideData({
+      securityGuideId,
+      profileId,
+      skipRules: shouldSkip.securityGuide.rules,
+      skipRuleTree: shouldSkip.securityGuide.ruleTree,
+      skipRuleGroups: shouldSkip.securityGuide.ruleGroups,
+      skipValueDefinitions: shouldSkip.securityGuide.valueDefinitions,
+      skipProfileRules: shouldSkip.securityGuide.profile.rules,
+      skipProfileTree: shouldSkip.securityGuide.profile.ruleTree,
+      ...(groupFilter ? { groupFilter } : {}),
+      tableState,
+    });
 
-  // TODO The wrapping of the fetches in an array is odd.
-  // Figure out why this is and how we can avoid it
-  const exporter = async () =>
-    (tailoring && policy
-      ? [await fetchBatchedTailoringRules()]
-      : [await fetchBatchedRules()]
-    ).flatMap((result) => result.data);
+    const {
+      data: { ruleTree: tailoringRuleTree, rules: tailoringRules },
+      fetchBatchedTailoringRules,
+    } = useTailoringsData({
+      policy,
+      tailoring,
+      tableState,
+      skipRules: shouldSkip.tailoring.rules,
+      skipRuleTree: shouldSkip.tailoring.ruleTree,
+      ...(groupFilter ? { groupFilter } : {}),
+    });
+    const rules = tailoringRules || securityGuideRules;
+    const ruleTree =
+      ruleGroups && (tailoringRuleTree || securityGuideRuleTree)
+        ? buildTreeTable(
+            tailoringRuleTree || securityGuideRuleTree,
+            ruleGroups?.data,
+            preselected
+          )
+        : undefined;
 
-  const itemIdsInTable = async () =>
-    (tailoring && policy
-      ? await fetchBatchedTailoringRules({ idsOnly: true })
-      : await fetchBatchedRules({ idsOnly: true })
-    )
-      .flatMap((result) => result.data)
-      .map(({ id }) => id);
+    // TODO The wrapping of the fetches in an array is odd.
+    // Figure out why this is and how we can avoid it
+    const exporter = async () =>
+      (tailoring && policy
+        ? [await fetchBatchedTailoringRules()]
+        : [await fetchBatchedRules()]
+      ).flatMap((result) => result.data);
 
-  const onValueSave = (_policyId, ...valueParams) =>
-    onValueOverrideSave(tailoring || osMinorVersion, ...valueParams);
+    const itemIdsInTable = async () =>
+      (tailoring && policy
+        ? await fetchBatchedTailoringRules({ idsOnly: true })
+        : await fetchBatchedRules({ idsOnly: true })
+      )
+        .flatMap((result) => result.data)
+        .map(({ id }) => id);
 
-  const onSelectRule = (...ruleParams) =>
-    onSelect?.(
-      tailoring || { ...securityGuide.data, os_minor_version: osMinorVersion },
-      ...ruleParams
-    );
+    const onValueSave = (_policyId, ...valueParams) =>
+      onValueOverrideSave(tailoring || osMinorVersion, ...valueParams);
 
-  return (
-    <>
-      <Grid>
-        {(tailoring || securityGuide) && (
-          <TabHeader
-            tailoring={tailoring}
-            securityGuide={
-              securityGuide && {
-                ...securityGuide.data,
-                osMajorVersion,
-                osMinorVersion,
+    const onSelectRule = (...ruleParams) =>
+      onSelect?.(
+        tailoring || {
+          ...securityGuide.data,
+          os_minor_version: osMinorVersion,
+        },
+        ...ruleParams
+      );
+
+    return (
+      <>
+        <Grid>
+          {(tailoring || securityGuide) && (
+            <TabHeader
+              tailoring={tailoring}
+              securityGuide={
+                securityGuide && {
+                  ...securityGuide.data,
+                  osMajorVersion,
+                  osMinorVersion,
+                }
               }
-            }
-            profileId={profileId || tailoring.profile_id}
-            rulesPageLink={rulesPageLink}
-            resetLink={resetLink}
-            systemCount={systemCount}
-          />
-        )}
-      </Grid>
-      <RulesTable
-        policyId={policy?.id}
-        securityGuideId={tailoring?.security_guide_id || securityGuideId}
-        total={rules?.meta?.total}
-        ruleTree={ruleTree}
-        rules={ruleTree ? rules?.data || [] : rules?.data}
-        ansibleSupportFilter
-        remediationsEnabled={false}
-        columns={columns}
-        setRuleValues={setRuleValues}
-        // TODO Doublecheck if we should set default profile value_override values when creating a policy
-        // TODO in order to be clean this needs to change and we need to merge overrides passed in with the ones from tailoring
-        ruleValues={tailoring?.value_overrides || {}}
-        valueDefinitions={{
-          data: valueDefinitions?.data,
-          loading:
-            shouldSkip.securityGuide.valueDefinitions === false &&
-            valueDefinitions === undefined,
-        }}
-        // TODO follow up on above, this and everything related within the details row can go
-        valueOverrides={ruleValues}
-        onRuleValueReset={onRuleValueReset}
-        onValueOverrideSave={onValueSave}
-        onSelect={onSelect ? onSelectRule : undefined}
-        selectedRules={preselected}
-        options={{
-          exporter,
-          itemIdsInTable,
-        }}
-        {...rulesTableProps}
-        {...(enableSecurityGuideRulesToggle
-          ? {
-              DedicatedAction: SecurityGuideRulesToggle,
-            }
-          : {})}
-      />
-    </>
-  );
-};
+              profileId={profileId || tailoring.profile_id}
+              rulesPageLink={rulesPageLink}
+              resetLink={resetLink}
+              systemCount={systemCount}
+            />
+          )}
+        </Grid>
+        <RulesTable
+          ref={ref}
+          policyId={policy?.id}
+          securityGuideId={tailoring?.security_guide_id || securityGuideId}
+          total={rules?.meta?.total}
+          ruleTree={ruleTree}
+          rules={ruleTree ? rules?.data || [] : rules?.data}
+          ansibleSupportFilter
+          remediationsEnabled={false}
+          columns={columns}
+          setRuleValues={setRuleValues}
+          // TODO Doublecheck if we should set default profile value_override values when creating a policy
+          // TODO in order to be clean this needs to change and we need to merge overrides passed in with the ones from tailoring
+          ruleValues={tailoring?.value_overrides || {}}
+          valueDefinitions={{
+            data: valueDefinitions?.data,
+            loading:
+              shouldSkip.securityGuide.valueDefinitions === false &&
+              valueDefinitions === undefined,
+          }}
+          // TODO follow up on above, this and everything related within the details row can go
+          valueOverrides={ruleValues}
+          onRuleValueReset={onRuleValueReset}
+          onValueOverrideSave={onValueSave}
+          onSelect={onSelect ? onSelectRule : undefined}
+          selectedRules={preselected}
+          options={{
+            exporter,
+            itemIdsInTable,
+          }}
+          {...rulesTableProps}
+          {...(enableSecurityGuideRulesToggle
+            ? {
+                DedicatedAction: SecurityGuideRulesToggle,
+              }
+            : {})}
+        />
+      </>
+    );
+  }
+);
 
 TailoringTab.propTypes = {
   policy: propTypes.shape({
@@ -233,10 +242,10 @@ TailoringTab.propTypes = {
   enableSecurityGuideRulesToggle: propTypes.bool,
 };
 
-const TailoringTabProvider = (props) => (
+const TailoringTabProvider = forwardRef((props, ref) => (
   <TableStateProvider>
-    <TailoringTab {...props} />
+    <TailoringTab ref={ref} {...props} />
   </TableStateProvider>
-);
+));
 
 export default TailoringTabProvider;

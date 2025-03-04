@@ -1,8 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import {
   Bullseye,
+  Button,
   EmptyState,
   Spinner,
   Text,
@@ -41,6 +42,7 @@ const EditPolicyProfilesRules = ({
       }),
       {}
     );
+
   const profileRefId = profile?.ref_id;
 
   const skipFetchingProfileRuleIds =
@@ -60,6 +62,12 @@ const EditPolicyProfilesRules = ({
     ),
     skip: skipFetchingProfileRuleIds,
   });
+
+  const ref = useRef(null);
+
+  console.log('deez high ref', { ref });
+
+  console.log('deez', { profilesAndRuleIds, preselected, valueOverrides });
 
   const onSelect = useCallback(
     (
@@ -92,6 +100,32 @@ const EditPolicyProfilesRules = ({
     },
     [change, selectedRuleRefIds]
   );
+
+  const resetRules = () => {
+    const ids = osMinorVersionCounts.map(({ osMinorVersion }) => ({
+      osMinorVersion,
+      ruleRefIds: profilesAndRuleIds.find(
+        ({ osMinorVersion: profileOsMinorVersion }) =>
+          profileOsMinorVersion === osMinorVersion
+      ).ruleIds,
+    }));
+
+    console.log('deez resetrules ids', ids);
+    const passedIds = ids[0].ruleRefIds;
+    console.log('deez resetrules passed ids', passedIds);
+    ref?.current?.refresh(passedIds);
+    // change(
+    //   'selectedRuleRefIds',
+    //   osMinorVersionCounts.map(({ osMinorVersion }) => ({
+    //     osMinorVersion,
+    //     ruleRefIds: profilesAndRuleIds.find(
+    //       ({ osMinorVersion: profileOsMinorVersion }) =>
+    //         profileOsMinorVersion === osMinorVersion
+    //     ).ruleIds,
+    //   }))
+    // );
+    // ref?.current?.refresh(ids);
+  };
 
   useDeepCompareEffectNoCheck(() => {
     if (profilesAndRuleIds !== undefined && selectedRuleRefIds === undefined) {
@@ -164,7 +198,9 @@ const EditPolicyProfilesRules = ({
           </EmptyState>
         </StateViewPart>
         <StateViewPart stateKey="data">
+          <Button onClick={resetRules}>Reset rules xddd</Button>
           <Tailorings
+            ref={ref}
             profiles={profilesAndRuleIds}
             columns={[Columns.Name, Columns.Severity, Columns.Remediation]}
             ouiaId="RHELVersions"
