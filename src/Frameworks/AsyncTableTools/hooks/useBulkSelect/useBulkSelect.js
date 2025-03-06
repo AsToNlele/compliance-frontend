@@ -6,6 +6,7 @@ import {
   compileTitle,
   selectOrUnselect,
 } from './helpers';
+import useContextSelectionManager from '@/Frameworks/AsyncTableTools/hooks/useContextSelectionManager';
 
 /**
  *  @typedef {object} useBulkSelectReturn
@@ -27,6 +28,7 @@ import {
  *  @param   {Array}               [options.itemIdsOnPage]  Array of item ids visible on the page
  *  @param   {string}              [options.identifier]     Property of the items that should be used as ID to select them
  *
+ *  @param                         options.groupName
  *  @returns {useBulkSelectReturn}                          Functions and props to use for setting up bulk selection
  *
  *  @category AsyncTableTools
@@ -40,6 +42,7 @@ const useBulkSelect = ({
   itemIdsInTable,
   itemIdsOnPage,
   identifier = 'itemId',
+  groupName,
 }) => {
   const [loading, setLoading] = useState(false);
   const enableBulkSelect = !!onSelect;
@@ -49,7 +52,7 @@ const useBulkSelect = ({
     select,
     deselect,
     clear,
-  } = useSelectionManager(preselected, {}, onSelect);
+  } = useContextSelectionManager(preselected, { groupName }, onSelect);
   const selectedIdsTotal = (selectedIds || []).length;
   const paginatedTotal = itemIdsOnPage?.length || total;
   const allSelected = selectedIdsTotal === total;

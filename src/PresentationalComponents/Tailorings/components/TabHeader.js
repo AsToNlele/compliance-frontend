@@ -11,8 +11,16 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { LinkWithPermission as Link } from 'PresentationalComponents';
 import OsVersionText from '../osVersionText';
 import { SSGVersionText } from '../ssgVersionText';
+import ResetRules from 'PresentationalComponents/ResetRules/ResetRules';
 
-const TabHeader = ({ tailoring, securityGuide, profileId, rulesPageLink }) => {
+const TabHeader = ({
+  tailoring,
+  securityGuide,
+  profileId,
+  rulesPageLink,
+  onSelect,
+}) => {
+  console.log('tabheader onselect', onSelect);
   return (
     <TextContent className="pf-v5-u-mt-md">
       <Text component={TextVariants.h3}>
@@ -45,6 +53,7 @@ const TabHeader = ({ tailoring, securityGuide, profileId, rulesPageLink }) => {
           />
         </FlexItem>
         <FlexItem align={{ default: 'alignRight' }}>
+          <ResetRules onSelect={onSelect} />
           {rulesPageLink && (
             <Link
               to={`/scappolicies/${profileId}/default_ruleset/${securityGuide?.id}`}

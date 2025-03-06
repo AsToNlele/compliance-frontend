@@ -1,41 +1,277 @@
 import React, { useEffect } from 'react';
 import { RebootingIcon } from '@patternfly/react-icons';
 import propTypes from 'prop-types';
+import useTableState from '@/Frameworks/AsyncTableTools/hooks/useTableState';
+import useContextSelectionManager from '@/Frameworks/AsyncTableTools/hooks/useContextSelectionManager';
 
-const ResetRules = ({
-  handleSelect,
-  updateRules,
-  profile,
-  newOsMinorVersion,
-  originalRules,
-  loading,
-  selectedRuleRefIds,
-}) => {
-  useEffect(() => {
-    if (!loading) {
-      updateRules(selectedRuleRefIds);
-    }
-  }, [loading, originalRules]);
+const ResetRules = ({ onSelect }) =>
+  // {
+  //   // handleSelect,
+  //   // updateRules,
+  //   // profile,
+  //   // newOsMinorVersion,
+  //   // originalRules,
+  //   // loading,
+  //   // selectedRuleRefIds,
+  // }
+  {
+    // useEffect(() => {
+    //   if (!loading) {
+    //     updateRules(selectedRuleRefIds);
+    //   }
+    // }, [loading, originalRules]);
 
-  const resetDefaultRules = () => {
-    handleSelect && handleSelect(profile, newOsMinorVersion, originalRules);
+    // const [, setSelection] = useTableState(`selection-default`);
+    // somehow skip init state, this breaks shit, sets selection to []
+
+    const { set, selection } = useContextSelectionManager(undefined, {
+      groupName: '7.8',
+    });
+
+    console.log('resetrules onselect', onSelect);
+    console.log('resetrules deez', { set, selection });
+
+    const resetDefaultRules = () => {
+      // handleSelect && handleSelect(profile, newOsMinorVersion, originalRules);
+      const rules = [
+        '71cdc9c0-8659-4489-b817-333794ee88b3',
+        '1f336f2c-5d2f-49ed-a0b7-fe5056dfe5fa',
+        '66ad3e64-7ed0-4501-b779-a6a09ec1e517',
+        '2a781e31-6c95-466f-9720-9937deaa5c4a',
+        'fd998d42-b1f4-478e-91d3-c2ef728b1db8',
+        'dbfa9650-fa1b-40f5-9b07-2f3c41d68c35',
+        '8bc869a7-19fd-4046-a5fe-2bc37474d4c4',
+        '78d03407-3cb1-4559-9785-62da5d1b0d7b',
+        'fc18e1be-2060-4d45-8f73-d546c0798836',
+        '1e8c556b-e0ba-4763-b811-94f78dd85f7a',
+        '22af3de7-c2b1-42ac-b4fc-aa630bfe0732',
+        '64b444a4-275a-423b-a5d1-33877ba8e044',
+        '02fe2ee3-48c6-4002-9f2a-3363ab0dc930',
+        '03e1c46f-f00f-4fc2-906f-41141c517356',
+        '0574d62b-79d5-481b-affd-374c79e1fead',
+        '058b19bf-ea2a-4355-82b3-db22d812967e',
+        '0a4a8576-d114-42ce-97c1-d676739ad015',
+        '0a9423fc-df81-4dfc-84a7-43fa5b6319a3',
+        '0a9e98dc-5ccc-46ab-842d-9899b9bab0a0',
+        '0ca777f7-0296-435e-81d0-9a42432dfd03',
+        '0d46b746-f12f-4ac3-a400-ef5abfbbb3fa',
+        '134def8b-3d8e-4179-b908-862d9b2a451f',
+        '13f173bc-efe7-41b7-8cd6-e3699a3c597a',
+        '13f8a34e-7856-4aca-91a9-327fa40118fb',
+        '14e597cd-e33b-4aaa-9f18-187b0055da7e',
+        '16738dc0-c4d5-4d2d-9e30-68ae453fa5ae',
+        '185631e6-2d06-45ea-b389-fdeebacbde29',
+        '189e725b-f1af-481d-ab2c-00426bc26e1b',
+        '19c950a4-7bb4-444d-83aa-2e4fea53e071',
+        '1bc4c4d9-c712-44e2-b86a-e6fafd906170',
+        '1d76b5bb-bd97-4ae1-b3da-f4ed2b68b8b4',
+        '2046a06b-b9a2-4ddc-a673-8d7390b0d671',
+        '214aa389-5385-4a6a-8f3f-9081e04902d5',
+        '2235a0c5-3764-4789-910d-d3d601b98fa0',
+        '2276b004-dc70-4b47-a6f0-afe31174155f',
+        '23a0b43f-6e0f-4640-9644-88b86f8f2136',
+        '23e15ba1-8292-49ca-a62c-b09be1ba2d91',
+        '260a3544-360c-4880-a392-c1e302c1fa67',
+        '26484a23-1217-49ce-acc5-2f0427eec835',
+        '2698cecc-2f6e-4ded-b14c-7fccc60437a6',
+        '26bf6a35-500e-4bd7-881c-46f35c5f3451',
+        '26bfefec-c8e0-4c06-9dad-d7243d314b89',
+        '2792a69b-a026-4b71-875b-4d52dbf21575',
+        '2aa24f5c-a27f-4357-88e4-3503f8a3f2f0',
+        '2aba5f76-4c58-41b8-9a71-f936f04ba3d0',
+        '2ac3ce4d-8ea0-48e2-82e1-422e015f6032',
+        '2c48c176-1634-4f53-8d47-4760075317bb',
+        '2d5d4090-8669-460b-aef2-0cc81c6ab5d6',
+        '2da476ee-b9b5-48c7-ae70-65e0db0f87fe',
+        '2eb25155-209e-42e7-9a5c-a90f60c6efbf',
+        '30d68f8e-87b4-4498-8f33-09f1ceedf9b9',
+        '3123b19b-a0d9-4239-b2a4-39eafccab1a7',
+        '31ecf094-f269-4abb-a723-b8ad18931363',
+        '341bf0c9-10cd-4620-adae-f51e157bc72f',
+        '34481f4a-e1a3-472e-a22f-0433dc611861',
+        '344c4cd1-bd51-4cb2-8f44-9185ecebcfd6',
+        '3914a179-fdaa-4750-bf5a-9309073b3a5c',
+        '3a1c6a49-c43f-47a0-855c-a3badd681c9a',
+        '3ab0308f-8827-4555-99d7-f4061e7764b0',
+        '3b9daef5-305b-4119-8933-c8af2e0cfb42',
+        '3bbcceaf-c192-44b2-936d-4a7f4d5e2045',
+        '3bd7b317-5273-46d5-b098-2f947e431790',
+        '3c0fdd23-6681-49d6-a61d-eb029903c788',
+        '3e958832-c043-4da1-b326-dda4ddb73ad7',
+        '41d499dc-25e9-4fbe-b849-a8a4a1250abd',
+        '43c2a44d-bdb4-4be3-946d-70ff97bc8b5c',
+        '467b9aaf-67f9-4713-8458-c6df1f8972b7',
+        '46a5712e-6878-4fd1-863c-20bf5ddfac3c',
+        '49a0d6d1-8681-4c53-98d5-cd1308a7db4e',
+        '4a4bb647-fa06-4288-bc4f-254c49938fa3',
+        '4bcc70fa-ab91-43e5-9803-034c9cb28888',
+        '4c9ba9e6-dd89-415a-ba85-ee4f8061fc66',
+        '4ec66998-4b02-4a82-821c-41b5e07b1aaa',
+        '4f4ec42e-52d0-4d75-aa8e-979ed316cd09',
+        '4fcd0729-2dad-46a7-967d-6e71ce1322ee',
+        '50b42a41-bb2e-4377-bcf0-ca2062228013',
+        '51a37662-7aa0-403c-b279-7527146bc45d',
+        '52cbdc19-b5f9-45e4-8928-0561104725a6',
+        '5453025d-dba5-46a4-a633-7bf5cfab11fc',
+        '55bcf61d-b0d4-4320-b22f-0f475843ccac',
+        '5783ab80-8ed9-4c6f-83c2-db3acf71840f',
+        '58e2aad7-328c-4915-93d7-5b1799bca36c',
+        '59a20c7d-1a0b-49e6-ad85-35d206bf89f1',
+        '5fcd972f-d258-46e4-a169-dd111f4a6758',
+        '617b1267-9e99-4703-8843-c5f687be1b1d',
+        '62f43230-34ce-4e91-afb2-d86cee7014dc',
+        '645b942e-17ed-4f85-b2b2-a2976e3371dd',
+        '64de8bcc-dc78-4683-8cc1-b64875635415',
+        '65244d1c-a5c8-43e5-ba61-82f8e6a505dc',
+        '654fa09f-02a4-4dac-b7d8-1ca25c6fa9a9',
+        '655e8929-6afd-4e82-8964-b5d61711e3b9',
+        '6580bed9-e0a7-4c6f-9dea-cef0075192b2',
+        '6608f356-fc5f-4577-a902-020c8aa3f3b3',
+        '66da4baf-99b7-4070-beef-599a4b0c1677',
+        '67337bd7-93ac-4939-95b8-33fbf8f73116',
+        '68c809d3-edb3-4410-9dde-6c5b8282ee4f',
+        '69df1a6f-ac20-40f8-9592-a8cc60434920',
+        '6aacd688-89d0-4f20-989a-16c0470bb884',
+        '6ae2569f-8d3f-493f-9b93-e9cc99674fc5',
+        '6ce3a782-482b-4ef0-84bd-0f5714a0b324',
+        '6e9bba07-cb3d-410c-a32b-bcae37c1b60b',
+        '6e9c62f4-d465-4b95-b4ea-04cefddb9e22',
+        '6fbfcc5e-5def-4c9b-a40c-0151591e02d1',
+        '704f9edd-3150-4a9f-acf2-c800155e88ee',
+        '706d39ef-a2d9-4729-8991-b41033aa5700',
+        '71001204-618e-4833-897c-785de5ff1fea',
+        '714d3da9-b16e-48be-b7a8-d32f085ecd6e',
+        '716e341e-211e-46ed-9d46-24441630b3b0',
+        '730eba96-74d2-471b-8e69-3bd111497257',
+        '7573afba-a37f-46f7-a896-b2747637189e',
+        '766ec9d7-7aae-4270-aacb-ea5ca3f48cde',
+        '76b195a7-429f-4d86-b017-abce56bc7301',
+        '792085c9-4e75-47da-a9a8-16ed7678c43f',
+        '7d51f768-215f-45f2-8cb8-c03182519512',
+        '7e013971-d387-42bb-811d-dae58bd25e4d',
+        '7ef32300-aaa5-484f-9404-23572e75e293',
+        '7fd0d1d0-6180-4390-a54a-8cc72311a748',
+        '80acd4db-8fde-4990-82e8-8a1bdc52372d',
+        '80af64c4-b45b-4def-8934-c458126fdec6',
+        '80c22ec5-e84e-4ba8-a124-61ba0c08d8c8',
+        '822c4341-08f6-4f08-b224-69c1acbcd2eb',
+        '8263f573-66f1-43d8-ab6e-9b72150a0d23',
+        '84dbc0b9-312a-48f9-85dc-c5f84ab3000f',
+        '85132b4d-c9d5-4253-bcfe-fcc4cb64918e',
+        '85e419ca-b84c-4a35-b432-137c81817944',
+        '867fd10d-de84-4cbf-86d0-8937c6b015e8',
+        '868b9d16-f2bc-40bf-b921-cce13c2756a5',
+        '86b49069-d695-4222-a9b5-4533206d75cc',
+        '86e21fbe-c701-4ec5-bd4c-dd4ddd4e64ca',
+        '88c86f84-6f1f-42c0-96fb-6e4ef35e8ebe',
+        '8a6e4307-2fa8-4527-b75b-b426eb14faa7',
+        '8a7a6dbe-9d4a-4682-9b6c-e41ba44dab2b',
+        '8dd2c30b-feb0-42b2-8a5a-e2ef66064402',
+        '8fcb4e24-b8ed-4729-8cf0-3ed030677c38',
+        '9189da8e-076f-423b-a658-f29ac0145933',
+        '94c35a32-0bf1-4916-9aff-b0497fdf98cf',
+        '95f42768-8175-4d5f-85b0-083b9070e4b5',
+        '9781b15c-6c35-4542-b9f8-1338cc453442',
+        '98248b5c-4599-400e-b8b5-3869483561f8',
+        '9836c473-39bc-479e-8249-1870f2004f83',
+        '99200214-034c-4da2-b205-952be339a60b',
+        '9a9baecf-d7ad-4f80-9448-4bec718de5d4',
+        '9ba3ae9d-bcb8-49ec-8bcb-99d45dea39f7',
+        '9c910751-cc95-4b5e-bbf5-59a19cfdbeee',
+        '9e74f649-15b7-4422-acf6-aed0618d7533',
+        '9ecf7311-1545-4f0c-8c2b-828768c85d42',
+        'a002c9a6-eacc-4305-a22c-fb1449e9ec4e',
+        'a0c14ae2-ca03-4151-8df0-d1335a4ece95',
+        'a0e4fb1a-f156-4a05-919f-1d4af7a86f1d',
+        'a12cae2b-0a96-41df-80a7-ec898a27ed27',
+        'a450dee8-910e-4d0c-87b1-acb894e7d3fc',
+        'a6dd620b-fba6-4e41-995d-d42267b6dcbf',
+        'aab39294-7db6-4886-8105-9ccd6827f141',
+        'ab859dbe-0f22-4474-8fa9-b3e6d0a4e331',
+        'ac4cd3c9-9985-4624-8ce9-340b80e41fc8',
+        'ac96bc26-ae81-4611-a7d9-92469c23770c',
+        'adfaa4c2-e3ad-40e9-9014-5e2f23fbb3d7',
+        'ae5ad1b1-bbd6-4950-ab0b-dffbc894ac6d',
+        'af28fe5c-ebaa-4a51-a679-4800e97568b7',
+        'b18ff72f-1708-4296-8d32-60781f4774ed',
+        'b20fb946-65a8-4712-95a4-24599291ee03',
+        'b30ad60b-22f9-460c-b907-b240b9044526',
+        'ba765289-9358-4740-93cc-77e68397765a',
+        'bc5424d3-8662-43bd-8e43-a5d2c21ef4a8',
+        'be07e535-bc61-42e1-bb7f-f9d8522acc8e',
+        'be979f29-402e-4ec2-9386-cb2a6c6fe3b8',
+        'bf3bac1d-e46a-4e70-aa33-96b08d274a3d',
+        'c06cb659-f175-49db-a13d-ce21e4922e41',
+        'c3042852-499e-43f7-a225-87b4c6a606a3',
+        'c35b100f-54f7-4fcd-9ceb-194ffe1f3690',
+        'c4275c5e-1c43-4c0f-b30c-df5f486d14d1',
+        'c568b6d6-c700-41cd-b6f6-843cb1960e06',
+        'c7998f7d-0ac1-49f5-858c-760f29d18fb8',
+        'c7b132aa-05ce-4e97-b7a6-c61218ec18a5',
+        'c7f9fc10-5f32-4dcb-89cb-02bf39ac028c',
+        'c82f013d-74aa-4511-bb86-09b7fc6259ab',
+        'c885e5e1-dc0f-44d1-9e60-e667be222d43',
+        'c9a14f5b-f57b-4c06-8ac7-621d3f6bacb3',
+        'c9b27db9-f5ae-41eb-8ecf-51eec039da42',
+        'cceb2ab8-9a53-4351-907c-a49f820989fb',
+        'ce242da0-df1d-4276-9b88-a14887090bdf',
+        'cf280879-5ef5-420e-a27e-cdb5e870cb05',
+        'cf479b4a-0535-4ce1-a00a-ddc1f28f4054',
+        'cfaab39a-8727-4f87-b273-c078ef7cd721',
+        'd3ea2633-70ed-45cb-9057-4b2be8a49d63',
+        'd4044d0d-83a5-49b1-acd3-40697b34d034',
+        'd458fc44-41c9-4ce5-bb91-f8926abb6abc',
+        'd76c7521-55f5-4b4f-af2b-983aecf374cc',
+        'd7fe0d8f-86f9-43b5-8e28-997c19abbca9',
+        'd8352cc4-e222-495d-a159-94184e5f8e35',
+        'da406836-956c-46bd-af89-d0f51051a479',
+        'dd26a753-d03f-4ef1-9474-96bb3762dc06',
+        'e1eb325a-0b44-416b-a960-262776f330f3',
+        'e3b97761-3279-45d5-8bd0-3740a5daf02b',
+        'e688114d-da2d-4c59-a0fa-d38088ac7e25',
+        'e74d1825-6a20-4922-b5ac-071270058d32',
+        'eb5090b0-98db-47c3-845c-c9ff555e15ba',
+        'ec466244-74c3-4e01-8716-f4fdd2d31569',
+        'ee74f3b0-ce7d-496d-a950-adfac3beedab',
+        'eee03bd5-5838-417d-b115-8942da57ed2b',
+        'eefe1da2-0d80-4dc6-aef9-7b7386ffbbaf',
+        'ef543b5e-6247-41e6-8760-052c5fd44a1f',
+        'f2589aac-b55b-4230-aa1a-36c9c4cd7720',
+        'f497005b-9412-4421-8429-c791c2c80123',
+        'f5607d02-b408-4eaa-acc2-18ddc95c792b',
+        'f5a60af0-d550-4b8a-81ee-4548a3e8c7c4',
+        'f622bd36-b150-462f-9b3a-0d623020b0e1',
+        'f65b1a73-eaf1-4f81-91d3-4db5b0d8e3b7',
+        'f7a6741f-7eee-4741-a9bb-1961ef1ce602',
+        'f7d59b9c-4741-48db-b524-33604850e42d',
+        'fafab737-b92d-45a9-bc37-da92acbfd86f',
+        'fb15b36c-487d-49d5-a1bc-f36130660ff4',
+        'fd449c87-476f-42ee-8123-8da8c8326484',
+      ];
+
+      console.log('setting rules', { rules });
+      set(rules);
+      console.log('onselect with params', onSelect, rules);
+      if (onSelect != null) {
+        onSelect(rules);
+      }
+    };
+    return (
+      <a className="pf-v5-u-ml-lg pf-v5-u-mr-xl" onClick={resetDefaultRules}>
+        <RebootingIcon className="pf-v5-u-mr-sm" />
+        Reset to default
+      </a>
+    );
   };
-  return (
-    <a className="pf-v5-u-ml-lg pf-v5-u-mr-xl" onClick={resetDefaultRules}>
-      <RebootingIcon className="pf-v5-u-mr-sm" />
-      Reset to default
-    </a>
-  );
-};
 
-ResetRules.propTypes = {
-  handleSelect: propTypes.func,
-  updateRules: propTypes.any,
-  profile: propTypes.any,
-  newOsMinorVersion: propTypes.any,
-  originalRules: propTypes.array,
-  loading: propTypes.bool,
-  selectedRuleRefIds: propTypes.array,
-};
+// ResetRules.propTypes = {
+//   handleSelect: propTypes.func,
+//   updateRules: propTypes.any,
+//   profile: propTypes.any,
+//   newOsMinorVersion: propTypes.any,
+//   originalRules: propTypes.array,
+//   loading: propTypes.bool,
+//   selectedRuleRefIds: propTypes.array,
+// };
 
 export default ResetRules;

@@ -141,9 +141,11 @@ const TailoringTab = ({
 
   const onSelectRule = (...ruleParams) =>
     onSelect?.(
-      tailoring || { ...securityGuide.data, os_minor_version: osMinorVersion },
+      tailoring || { ...securityGuide?.data, os_minor_version: osMinorVersion },
       ...ruleParams
     );
+
+  console.log('tailoring tab onSelect, onSelectRule', onSelect, onSelectRule);
 
   return (
     <>
@@ -162,6 +164,7 @@ const TailoringTab = ({
             rulesPageLink={rulesPageLink}
             resetLink={resetLink}
             systemCount={systemCount}
+            onSelect={onSelect ? onSelectRule : undefined}
           />
         )}
       </Grid>
@@ -191,6 +194,7 @@ const TailoringTab = ({
         onSelect={onSelect ? onSelectRule : undefined}
         selectedRules={preselected}
         options={{
+          groupName: `${osMajorVersion}.${osMinorVersion}`,
           exporter,
           itemIdsInTable,
         }}

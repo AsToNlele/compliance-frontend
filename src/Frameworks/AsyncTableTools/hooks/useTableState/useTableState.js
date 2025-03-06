@@ -48,11 +48,11 @@ const useTableState = (namespace, initialState, options = {}) => {
         );
 
         // Comment out for debugging table issues
-        // console.group('State change by', namespace);
-        // console.log('New state for namespace', newState);
-        // console.log('Current state:', currentState?.tableState);
-        // console.log('Next State:', nextState?.tableState);
-        // console.groupEnd();
+        console.group('State change by', namespace);
+        console.log('New state for namespace', newState);
+        console.log('Current state:', currentState?.tableState);
+        console.log('Next State:', nextState?.tableState);
+        console.groupEnd();
 
         return nextState;
       });
@@ -61,7 +61,9 @@ const useTableState = (namespace, initialState, options = {}) => {
   );
 
   useDeepCompareEffect(() => {
-    setTableState(initialState);
+    if (initialState !== undefined) {
+      setTableState(initialState);
+    }
   }, [initialState, setTableState]);
 
   return [
